@@ -1,0 +1,246 @@
+{
+  "test_suite": "AEA Experimental Features Tests",
+  "version": "0.1.0",
+  "description": "Tests for experimental v0.1.0 features: request correlation, webhooks, adaptive retry, health learning",
+  "status": "experimental",
+
+  "features": {
+
+    "request_correlation": {
+      "description": "Request/Response correlation tracking (RPC-style messaging)",
+      "enabled": false,
+      "test_cases": {
+        "basic_correlation": {
+          "request": {
+            "protocol_version": "0.1.0",
+            "message_id": "req-001",
+            "message_type": "question",
+            "timestamp": "2025-10-16T10:30:00Z",
+            "sender": {"agent_id": "claude-requester"},
+            "recipient": {"agent_id": "claude-responder"},
+            "content": {
+              "subject": "Database query",
+              "body": "What is the schema?"
+            },
+            "correlation": {
+              "request_id": "req-001",
+              "expects_response": true,
+              "timeout_seconds": 300
+            }
+          },
+          "response": {
+            "protocol_version": "0.1.0",
+            "message_id": "resp-001",
+            "message_type": "response",
+            "timestamp": "2025-10-16T10:31:00Z",
+            "sender": {"agent_id": "claude-responder"},
+            "recipient": {"agent_id": "claude-requester"},
+            "content": {
+              "subject": "Re: Database query",
+              "body": "Here is the schema..."
+            },
+            "correlation": {
+              "in_reply_to": "req-001",
+              "request_id": "req-001"
+            }
+          }
+        },
+        "correlation_tracking": {
+          "description": "Track request/response pairs",
+          "requests": {
+            "req-001": {
+              "status": "completed",
+              "response_received": "resp-001",
+              "latency_ms": 60000
+            },
+            "req-002": {
+              "status": "pending",
+              "response_received": null,
+              "latency_ms": null
+            },
+            "req-003": {
+              "status": "timeout",
+              "response_received": null,
+              "latency_ms": 300000
+            }
+          }
+        }
+      }
+    },
+
+    "webhook_integration": {
+      "description": "External webhook notifications for message events",
+      "enabled": false,
+      "test_cases": {
+        "webhook_config": {
+          "webhooks": [
+            {
+              "id": "webhook-001",
+              "url": "https://example.com/webhook/aea",
+              "events": ["message_received", "message_processed", "response_sent"],
+              "enabled": true,
+              "retry_policy": {
+                "max_retries": 3,
+                "backoff_multiplier": 2,
+                "initial_delay_ms": 1000
+              },
+              "authentication": {
+                "type": "bearer_token",
+                "token_env_var": "AEA_WEBHOOK_TOKEN"
+              }
+            }
+          ]
+        },
+        "webhook_payload_example": {
+          "event": "message_received",
+          "timestamp": "2025-10-16T10:30:45Z",
+          "agent_id": "claude-aea",
+          "message": {
+            "message_id": "msg-001",
+            "message_type": "question",
+            "sender": "claude-external",
+            "subject": "New question received"
+          }
+        }
+      }
+    },
+
+    "adaptive_retry": {
+      "description": "Adaptive retry backoff for failed message deliveries",
+      "enabled": false,
+      "test_cases": {
+        "backoff_schedule": {
+          "initial_delay_ms": 1000,
+          "max_delay_ms": 60000,
+          "multiplier": 2,
+          "jitter_factor": 0.1,
+          "max_retries": 5,
+          "schedule": [
+            {"attempt": 1, "delay_ms": 1000},
+            {"attempt": 2, "delay_ms": 2000},
+            {"attempt": 3, "delay_ms": 4000},
+            {"attempt": 4, "delay_ms": 8000},
+            {"attempt": 5, "delay_ms": 16000}
+          ]
+        },
+        "retry_scenarios": [
+          {
+            "scenario": "temporary_failure",
+            "initial_failure": true,
+            "retry_succeeds_at": 3,
+            "expected_outcome": "delivered"
+          },
+          {
+            "scenario": "permanent_failure",
+            "initial_failure": true,
+            "retry_succeeds_at": null,
+            "expected_outcome": "max_retries_exceeded"
+          },
+          {
+            "scenario": "immediate_success",
+            "initial_failure": false,
+            "retry_succeeds_at": 1,
+            "expected_outcome": "delivered"
+          }
+        ]
+      }
+    },
+
+    "agent_health_learning": {
+      "description": "Learn agent availability patterns and optimize retry timing",
+      "enabled": false,
+      "test_cases": {
+        "health_tracking": {
+          "agent_id": "claude-agent-1",
+          "availability_history": [
+            {"timestamp": "2025-10-16T08:00:00Z", "status": "available", "response_time_ms": 150},
+            {"timestamp": "2025-10-16T09:00:00Z", "status": "available", "response_time_ms": 200},
+            {"timestamp": "2025-10-16T10:00:00Z", "status": "slow", "response_time_ms": 5000},
+            {"timestamp": "2025-10-16T11:00:00Z", "status": "unavailable", "response_time_ms": null}
+          ],
+          "learned_patterns": {
+            "typical_response_time_ms": 175,
+            "slow_threshold_ms": 1000,
+            "peak_hours": ["10:00-12:00", "14:00-16:00"],
+            "offline_windows": ["02:00-03:00"],
+            "reliability_score": 0.75
+          },
+          "adaptive_behavior": {
+            "retry_during_peak_hours": false,
+            "extended_timeout_when_slow": true,
+            "skip_during_offline_windows": true
+          }
+        },
+        "learning_algorithm": {
+          "window_size_hours": 24,
+          "update_frequency_minutes": 15,
+          "anomaly_detection": "enabled",
+          "confidence_threshold": 0.8
+        }
+      }
+    },
+
+    "partial_processing": {
+      "description": "Process messages even if some non-critical fields are invalid",
+      "enabled": true,
+      "test_cases": {
+        "partial_success": {
+          "message": {
+            "protocol_version": "0.1.0",
+            "message_id": "partial-001",
+            "message_type": "question",
+            "timestamp": "2025-10-16T10:30:45Z",
+            "sender": {"agent_id": "claude-test"},
+            "recipient": {"agent_id": "claude-target"},
+            "content": {
+              "subject": "Partial processing test",
+              "body": "Core message content"
+            },
+            "metadata": {
+              "invalid_field": "This causes a parsing error"
+            },
+            "processing": {
+              "allow_partial_processing": true,
+              "critical_fields": ["message_id", "message_type", "content"],
+              "optional_fields": ["metadata"]
+            }
+          },
+          "expected_outcome": {
+            "status": "partial_success",
+            "processed_fields": ["message_id", "message_type", "content", "sender", "recipient"],
+            "failed_fields": ["metadata"],
+            "warnings": ["metadata field failed validation but processing continued"]
+          }
+        }
+      }
+    }
+  },
+
+  "test_results_template": {
+    "test_run_id": "run-{timestamp}",
+    "test_suite": "experimental-features",
+    "timestamp": "2025-10-16T10:30:45Z",
+    "environment": "development",
+    "results": {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "errors": []
+    },
+    "feature_status": {
+      "request_correlation": "not_tested",
+      "webhook_integration": "not_tested",
+      "adaptive_retry": "not_tested",
+      "agent_health_learning": "not_tested",
+      "partial_processing": "passed"
+    },
+    "notes": "Experimental features are disabled by default in v0.1.0"
+  },
+
+  "configuration": {
+    "enable_experimental_features": false,
+    "features_to_enable": [],
+    "warning": "Experimental features are not recommended for production use"
+  }
+}

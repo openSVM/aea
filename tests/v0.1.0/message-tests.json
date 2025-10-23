@@ -1,0 +1,235 @@
+{
+  "test_suite": "AEA Message Format Tests",
+  "version": "0.1.0",
+  "description": "Comprehensive test cases for AEA message validation and processing",
+
+  "tests": {
+
+    "valid_complete_message": {
+      "description": "Valid message with all required and optional fields",
+      "expected_result": "pass",
+      "message": {
+        "protocol_version": "0.1.0",
+        "message_id": "550e8400-e29b-41d4-a716-446655440000",
+        "message_type": "question",
+        "timestamp": "2025-10-16T10:30:45Z",
+        "sender": {
+          "agent_id": "claude-test"
+        },
+        "recipient": {
+          "agent_id": "claude-target"
+        },
+        "content": {
+          "subject": "Test",
+          "body": "Valid body"
+        },
+        "metadata": {
+          "tags": ["test"]
+        },
+        "processing": {
+          "critical_fields": ["message_id", "message_type", "timestamp"],
+          "optional_fields": ["metadata"],
+          "allow_partial_processing": true
+        }
+      }
+    },
+
+    "minimal_message": {
+      "description": "Message with only required fields, no optional fields",
+      "expected_result": "pass",
+      "message": {
+        "protocol_version": "0.1.0",
+        "message_id": "550e8400-e29b-41d4-a716-446655440001",
+        "message_type": "update",
+        "timestamp": "2025-10-16T10:35:45Z",
+        "sender": {
+          "agent_id": "claude-sender"
+        },
+        "recipient": {
+          "agent_id": "claude-receiver"
+        },
+        "content": {
+          "subject": "Minimal test",
+          "body": "Only required fields"
+        }
+      }
+    },
+
+    "partial_processing_message": {
+      "description": "Message allowing partial processing if some fields fail",
+      "expected_result": "pass_with_warnings",
+      "message": {
+        "protocol_version": "0.1.0",
+        "message_id": "partial-test-001",
+        "message_type": "question",
+        "timestamp": "2025-10-16T10:30:45Z",
+        "sender": {
+          "agent_id": "claude-test"
+        },
+        "recipient": {
+          "agent_id": "claude-target"
+        },
+        "content": {
+          "subject": "Partial Processing Test",
+          "body": "This message allows partial processing"
+        },
+        "processing": {
+          "allow_partial_processing": true,
+          "critical_fields": ["message_id", "message_type"],
+          "optional_fields": ["metadata", "extra_data"]
+        }
+      }
+    },
+
+    "all_message_types": {
+      "description": "Examples of all valid message types",
+      "expected_result": "pass",
+      "message_types": {
+        "question": {
+          "protocol_version": "0.1.0",
+          "message_id": "type-question-001",
+          "message_type": "question",
+          "timestamp": "2025-10-16T10:30:45Z",
+          "sender": {"agent_id": "claude-asker"},
+          "recipient": {"agent_id": "claude-answerer"},
+          "content": {
+            "subject": "Technical question",
+            "body": "What is the optimal configuration?"
+          }
+        },
+        "update": {
+          "protocol_version": "0.1.0",
+          "message_id": "type-update-001",
+          "message_type": "update",
+          "timestamp": "2025-10-16T10:31:45Z",
+          "sender": {"agent_id": "claude-updater"},
+          "recipient": {"agent_id": "claude-subscriber"},
+          "content": {
+            "subject": "Status update",
+            "body": "Deployment completed successfully"
+          }
+        },
+        "issue": {
+          "protocol_version": "0.1.0",
+          "message_id": "type-issue-001",
+          "message_type": "issue",
+          "timestamp": "2025-10-16T10:32:45Z",
+          "sender": {"agent_id": "claude-reporter"},
+          "recipient": {"agent_id": "claude-maintainer"},
+          "content": {
+            "subject": "Bug report",
+            "body": "Memory leak detected"
+          },
+          "routing": {
+            "priority": "high"
+          }
+        },
+        "handoff": {
+          "protocol_version": "0.1.0",
+          "message_id": "type-handoff-001",
+          "message_type": "handoff",
+          "timestamp": "2025-10-16T10:33:45Z",
+          "sender": {"agent_id": "claude-developer"},
+          "recipient": {"agent_id": "claude-integrator"},
+          "content": {
+            "subject": "Integration complete",
+            "body": "Module ready for integration"
+          }
+        },
+        "request": {
+          "protocol_version": "0.1.0",
+          "message_id": "type-request-001",
+          "message_type": "request",
+          "timestamp": "2025-10-16T10:34:45Z",
+          "sender": {"agent_id": "claude-requester"},
+          "recipient": {"agent_id": "claude-implementer"},
+          "content": {
+            "subject": "Feature request",
+            "body": "Please add retry logic"
+          }
+        },
+        "response": {
+          "protocol_version": "0.1.0",
+          "message_id": "type-response-001",
+          "message_type": "response",
+          "timestamp": "2025-10-16T10:35:45Z",
+          "sender": {"agent_id": "claude-responder"},
+          "recipient": {"agent_id": "claude-original"},
+          "content": {
+            "subject": "Re: Technical question",
+            "body": "Here is the answer..."
+          },
+          "correlation": {
+            "in_reply_to": "type-question-001"
+          }
+        }
+      }
+    },
+
+    "priority_levels": {
+      "description": "Test all valid priority levels",
+      "expected_result": "pass",
+      "priorities": ["low", "normal", "high", "urgent"]
+    },
+
+    "edge_cases": {
+      "description": "Edge cases that should be handled gracefully",
+      "cases": {
+        "empty_body": {
+          "expected_result": "fail",
+          "message": {
+            "protocol_version": "0.1.0",
+            "message_id": "edge-empty-001",
+            "message_type": "question",
+            "timestamp": "2025-10-16T10:30:45Z",
+            "sender": {"agent_id": "claude-test"},
+            "recipient": {"agent_id": "claude-target"},
+            "content": {
+              "subject": "Empty body test",
+              "body": ""
+            }
+          }
+        },
+        "very_long_body": {
+          "expected_result": "pass",
+          "max_length": 10000,
+          "message": {
+            "protocol_version": "0.1.0",
+            "message_id": "edge-long-001",
+            "message_type": "update",
+            "timestamp": "2025-10-16T10:30:45Z",
+            "sender": {"agent_id": "claude-test"},
+            "recipient": {"agent_id": "claude-target"},
+            "content": {
+              "subject": "Long body test",
+              "body": "[Very long text content would go here...]"
+            }
+          }
+        },
+        "special_characters": {
+          "expected_result": "pass",
+          "message": {
+            "protocol_version": "0.1.0",
+            "message_id": "edge-special-001",
+            "message_type": "question",
+            "timestamp": "2025-10-16T10:30:45Z",
+            "sender": {"agent_id": "claude-test"},
+            "recipient": {"agent_id": "claude-target"},
+            "content": {
+              "subject": "Special chars: <>&\"'",
+              "body": "Testing: {}, [], (), <>, %, &, \", ', \n, \t"
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "validation_rules": {
+    "required_fields": ["protocol_version", "message_id", "message_type", "timestamp", "sender", "recipient", "content"],
+    "valid_message_types": ["question", "update", "issue", "handoff", "request", "response"],
+    "valid_priorities": ["low", "normal", "high", "urgent"],
+    "timestamp_format": "ISO8601",
+    "protocol_version_format": "semver"
+  }
+}

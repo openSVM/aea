@@ -1,0 +1,27 @@
+{
+  "protocol_version": "2.2",
+  "message_id": "550e8400-e29b-41d4-a716-446655440000",
+  "message_type": "question",
+  "timestamp": "2025-10-16T10:30:45Z",
+  "sender": {
+    "agent_id": "claude-test"
+  },
+  "recipient": {
+    "agent_id": "claude-target"
+  },
+  "content": {
+    "subject": "Test",
+    "body": "Valid body"
+  },
+  "processing": {
+    "critical_fields": [
+      "message_id",
+      "message_type",
+      "timestamp"
+    ],
+    "optional_fields": [
+      "metadata"
+    ],
+    "allow_partial_processing": true
+  }
+}

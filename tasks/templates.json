@@ -1,0 +1,348 @@
+{
+  "aea_task_templates": {
+    "description": "Comprehensive task management templates for AEA protocol",
+    "version": "0.1.0",
+    "last_updated": "2025-10-16"
+  },
+
+  "templates": {
+
+    "basic_task": {
+      "description": "Standard task template for general work items",
+      "example": {
+        "task_id": "task-{timestamp}-{uuid}",
+        "title": "Task title describing work to be done",
+        "description": "Detailed description of the task and its requirements",
+        "status": "pending|in_progress|completed|blocked|cancelled",
+        "priority": "low|normal|high|urgent",
+        "category": "feature|bugfix|refactor|documentation|testing|integration",
+
+        "created_by": {
+          "agent_id": "claude-{repo_name}",
+          "timestamp": "2025-10-16T10:30:45Z"
+        },
+
+        "assigned_to": {
+          "agent_id": "claude-{target_repo}",
+          "timestamp": "2025-10-16T10:30:45Z",
+          "confirmed": false
+        },
+
+        "dates": {
+          "created": "2025-10-16T10:30:45Z",
+          "started": null,
+          "due": "2025-10-20T23:59:59Z",
+          "completed": null,
+          "estimated_hours": 4.5
+        },
+
+        "dependencies": ["task-{dependency_id}"],
+        "requirements": ["Requirement 1", "Requirement 2"],
+        "acceptance_criteria": ["Criteria 1 must be met", "Criteria 2 must be met"],
+        "related_messages": ["message-{timestamp}-from-{agent_id}.json"],
+        "tags": ["tag1", "tag2"],
+        "metadata": {}
+      }
+    },
+
+    "design_document": {
+      "description": "Detailed design document template for architecture and implementation planning",
+      "example": {
+        "design_id": "design-{timestamp}-{uuid}",
+        "related_task_id": "task-{task_id}",
+        "related_spec_id": "spec-{spec_id}",
+
+        "architecture": {
+          "overview": "High-level architecture description",
+          "components": [
+            {
+              "name": "Component Name",
+              "responsibility": "What this component does",
+              "dependencies": ["other_component"],
+              "interfaces": {
+                "input": "What it receives",
+                "output": "What it produces"
+              }
+            }
+          ],
+          "data_flow": "How data moves through the system"
+        },
+
+        "design_patterns": ["Pattern name and why it's used"],
+
+        "algorithms": [
+          {
+            "name": "Algorithm Name",
+            "description": "What the algorithm does",
+            "complexity": "O(n log n) - time and space complexity",
+            "pseudocode": "High-level algorithm steps",
+            "trade_offs": "Why this approach vs alternatives"
+          }
+        ],
+
+        "class_structure": {
+          "class_name": {
+            "purpose": "Why this class exists",
+            "methods": [
+              {
+                "name": "method_name",
+                "parameters": ["param1", "param2"],
+                "returns": "return_type",
+                "description": "What this method does"
+              }
+            ],
+            "properties": ["property1", "property2"]
+          }
+        },
+
+        "file_structure": {
+          "directory": {
+            "file": "Purpose of this file",
+            "subdirectory": {
+              "nested_file": "Purpose of nested file"
+            }
+          }
+        },
+
+        "concurrency_model": {
+          "threading": "Single-threaded | Multi-threaded | Async",
+          "synchronization": "How concurrent access is handled",
+          "race_conditions": "Known race conditions and mitigations"
+        },
+
+        "error_scenarios": [
+          {
+            "scenario": "Describe error scenario",
+            "handling": "How it's handled in design",
+            "prevention": "How it's prevented"
+          }
+        ],
+
+        "performance_optimizations": ["Optimization technique and rationale"],
+        "security_considerations": ["Security measure and threat it addresses"],
+
+        "diagrams": {
+          "architecture_diagram": "ASCII or URL to architecture diagram",
+          "flow_diagram": "ASCII or URL to flow diagram"
+        },
+
+        "alternatives_considered": [
+          {
+            "approach": "Alternative design approach",
+            "pros": ["advantage1", "advantage2"],
+            "cons": ["disadvantage1", "disadvantage2"],
+            "reason_rejected": "Why this wasn't chosen"
+          }
+        ],
+
+        "metadata": {
+          "version": "1.0",
+          "last_updated": "2025-10-16T10:30:45Z",
+          "updated_by": "claude-{repo_name}",
+          "status": "draft|review|approved|implemented"
+        }
+      }
+    },
+
+    "technical_specification": {
+      "description": "Technical specification template for implementation requirements",
+      "example": {
+        "specification_id": "spec-{timestamp}-{uuid}",
+        "related_task_id": "task-{task_id}",
+
+        "technical_requirements": {
+          "description": "Technical specifications and implementation details",
+          "constraints": [
+            "Performance constraint (e.g., <100ms)",
+            "Memory constraint (e.g., <1GB)",
+            "Compatibility constraint (e.g., Python 3.8+)"
+          ],
+          "interfaces": {
+            "input": "Input format/structure",
+            "output": "Output format/structure"
+          }
+        },
+
+        "implementation_guidelines": {
+          "language": "rust|python|javascript|go|etc",
+          "frameworks": ["Framework1", "Framework2"],
+          "testing_requirements": "Unit tests required, integration tests recommended",
+          "documentation_requirements": "Code comments, README, examples"
+        },
+
+        "quality_standards": {
+          "code_style": "Style guide or linter to use",
+          "coverage_minimum": 80,
+          "performance_benchmarks": "Performance targets",
+          "security_requirements": "Security considerations and validation"
+        },
+
+        "external_dependencies": [
+          {
+            "name": "dependency_name",
+            "version": "1.0.0+",
+            "reason": "Why this dependency is needed"
+          }
+        ],
+
+        "apis_and_endpoints": [
+          {
+            "name": "endpoint_name",
+            "method": "GET|POST|PUT|DELETE",
+            "path": "/path/to/endpoint",
+            "description": "What this endpoint does",
+            "parameters": {},
+            "response": {}
+          }
+        ],
+
+        "data_models": {
+          "model_name": {
+            "field1": "type1",
+            "field2": "type2"
+          }
+        },
+
+        "error_handling": {
+          "expected_errors": [
+            {
+              "error_type": "ErrorType",
+              "cause": "What causes this error",
+              "handling": "How to handle it"
+            }
+          ]
+        },
+
+        "metadata": {
+          "version": "1.0",
+          "last_updated": "2025-10-16T10:30:45Z",
+          "updated_by": "claude-{repo_name}"
+        }
+      }
+    },
+
+    "task_list": {
+      "description": "Task list template for tracking multiple tasks and project status",
+      "example": {
+        "task_list_id": "task-list-{timestamp}",
+        "list_name": "Master Task List",
+        "description": "Central registry of all tasks across agents",
+
+        "metadata": {
+          "created": "2025-10-16T10:30:45Z",
+          "last_updated": "2025-10-16T10:30:45Z",
+          "total_tasks": 0,
+          "by_status": {
+            "pending": 0,
+            "in_progress": 0,
+            "completed": 0,
+            "blocked": 0,
+            "cancelled": 0
+          },
+          "by_priority": {
+            "low": 0,
+            "normal": 0,
+            "high": 0,
+            "urgent": 0
+          },
+          "by_agent": {}
+        },
+
+        "summary": {
+          "completion_rate": 0,
+          "on_schedule": 0,
+          "overdue": 0,
+          "blocked_count": 0,
+          "recent_updates": [
+            {
+              "task_id": "task-id",
+              "status": "new_status",
+              "timestamp": "2025-10-16T10:30:45Z",
+              "updated_by": "claude-agent"
+            }
+          ]
+        },
+
+        "tasks": [
+          {
+            "task_id": "task-{timestamp}-{uuid}",
+            "title": "Task title",
+            "status": "pending|in_progress|completed|blocked|cancelled",
+            "priority": "low|normal|high|urgent",
+            "category": "feature|bugfix|refactor|documentation|testing|integration",
+            "assigned_to": "claude-{repo_name}",
+            "created_by": "claude-{creator_repo}",
+            "due_date": "2025-10-20T23:59:59Z",
+            "progress": 0,
+            "dependencies": ["task-id-1", "task-id-2"],
+            "blocked_by": ["task-id-blocked"],
+            "related_spec": "spec-{spec_id}",
+            "related_design": "design-{design_id}",
+            "notes": "Optional notes about this task"
+          }
+        ],
+
+        "filtering_and_views": {
+          "by_agent": {
+            "claude-{repo1}": ["task-id-1", "task-id-2"],
+            "claude-{repo2}": ["task-id-3", "task-id-4"]
+          },
+          "by_category": {
+            "feature": ["task-id-1"],
+            "bugfix": ["task-id-2"],
+            "documentation": ["task-id-3"]
+          },
+          "by_status": {
+            "pending": ["task-id-1"],
+            "in_progress": ["task-id-2"],
+            "completed": ["task-id-3"]
+          },
+          "by_priority": {
+            "urgent": ["task-id-1"],
+            "high": ["task-id-2"]
+          }
+        },
+
+        "recurring_tasks": [
+          {
+            "template_id": "recurring-{name}",
+            "template_title": "Recurring task title",
+            "frequency": "daily|weekly|monthly|quarterly",
+            "next_due": "2025-10-17T10:30:45Z",
+            "assigned_to": "claude-{repo}",
+            "last_instance_id": "task-id-last"
+          }
+        ],
+
+        "sprints": [
+          {
+            "sprint_id": "sprint-{number}",
+            "name": "Sprint Name",
+            "start_date": "2025-10-16T00:00:00Z",
+            "end_date": "2025-10-30T23:59:59Z",
+            "tasks": ["task-id-1", "task-id-2"],
+            "goals": ["Goal 1", "Goal 2"],
+            "status": "planning|active|completed"
+          }
+        ],
+
+        "integrations": {
+          "connected_repos": ["repo-name-1", "repo-name-2"],
+          "sync_frequency": "every 5 minutes",
+          "last_sync": "2025-10-16T10:25:00Z",
+          "sync_status": "in_sync|pending|conflict"
+        }
+      }
+    }
+  },
+
+  "usage": {
+    "description": "How to use these templates",
+    "examples": [
+      "Copy the template you need",
+      "Replace {placeholders} with actual values",
+      "Save to appropriate location",
+      "Reference in AEA messages via related_task_id fields"
+    ]
+  }
+}

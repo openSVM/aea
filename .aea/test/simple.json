@@ -1,0 +1,9 @@
+{
+  "protocol_version": "0.1.0",
+  "message_id": "test-123",
+  "message_type": "question",
+  "timestamp": "2025-10-22T12:00:00Z",
+  "sender": {"agent_id": "test-agent"},
+  "recipient": {"agent_id": "target-agent"},
+  "content": {"subject": "Test", "body": "Test message body here"}
+}

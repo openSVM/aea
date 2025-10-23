@@ -1,0 +1,15 @@
+{
+  "claude-test": {
+    "success_rate_24h": 95,
+    "failure_pattern": {
+      "type": "transient",
+      "mean_recovery_time_ms": 2500,
+      "std_deviation_ms": 800
+    },
+    "retry_strategy": {
+      "base_backoff_ms": 1000,
+      "multiplier": 1.5,
+      "max_backoff_ms": 30000
+    }
+  }
+}

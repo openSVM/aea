@@ -1,0 +1,256 @@
+{
+  "test_suite": "AEA Multi-Hop Routing Tests",
+  "version": "0.1.0",
+  "description": "Tests for multi-hop message routing through relay agents",
+
+  "tests": {
+
+    "basic_multihop": {
+      "description": "Basic multi-hop routing - first hop",
+      "hop_number": 0,
+      "expected_result": "forward_to_next_hop",
+      "message": {
+        "protocol_version": "0.1.0",
+        "message_id": "550e8400-e29b-41d4-a716-446655440000",
+        "message_type": "question",
+        "timestamp": "2025-10-16T10:30:45Z",
+        "sender": {
+          "agent_id": "claude-agent-a"
+        },
+        "recipient": {
+          "agent_id": "claude-agent-b"
+        },
+        "routing": {
+          "path": [
+            "claude-agent-a",
+            "relay-firewall",
+            "claude-agent-b"
+          ],
+          "hop_count": 0,
+          "max_hops": 3,
+          "visited_agents": [
+            "claude-agent-a"
+          ],
+          "next_hop": "relay-firewall"
+        },
+        "content": {
+          "subject": "Test",
+          "body": "Multi-hop message"
+        }
+      }
+    },
+
+    "intermediate_hop": {
+      "description": "Message at intermediate hop (relay)",
+      "hop_number": 1,
+      "expected_result": "forward_to_next_hop",
+      "message": {
+        "protocol_version": "0.1.0",
+        "message_id": "550e8400-e29b-41d4-a716-446655440000",
+        "message_type": "question",
+        "timestamp": "2025-10-16T10:30:45Z",
+        "sender": {
+          "agent_id": "claude-agent-a"
+        },
+        "recipient": {
+          "agent_id": "claude-agent-b"
+        },
+        "routing": {
+          "path": [
+            "claude-agent-a",
+            "relay-firewall",
+            "claude-agent-b"
+          ],
+          "hop_count": 1,
+          "max_hops": 3,
+          "visited_agents": [
+            "claude-agent-a",
+            "relay-firewall"
+          ],
+          "next_hop": "claude-agent-b"
+        },
+        "content": {
+          "subject": "Test",
+          "body": "Multi-hop message"
+        }
+      }
+    },
+
+    "final_destination": {
+      "description": "Message reaches final destination",
+      "hop_number": 2,
+      "expected_result": "deliver_to_recipient",
+      "message": {
+        "protocol_version": "0.1.0",
+        "message_id": "550e8400-e29b-41d4-a716-446655440000",
+        "message_type": "question",
+        "timestamp": "2025-10-16T10:30:45Z",
+        "sender": {
+          "agent_id": "claude-agent-a"
+        },
+        "recipient": {
+          "agent_id": "claude-agent-b"
+        },
+        "routing": {
+          "path": [
+            "claude-agent-a",
+            "relay-firewall",
+            "claude-agent-b"
+          ],
+          "hop_count": 2,
+          "max_hops": 3,
+          "visited_agents": [
+            "claude-agent-a",
+            "relay-firewall",
+            "claude-agent-b"
+          ],
+          "next_hop": null
+        },
+        "content": {
+          "subject": "Test",
+          "body": "Multi-hop message"
+        }
+      }
+    },
+
+    "exceeded_max_hops": {
+      "description": "Message exceeds maximum hop count - should be dropped",
+      "hop_number": 3,
+      "expected_result": "drop_message",
+      "message": {
+        "protocol_version": "0.1.0",
+        "message_id": "550e8400-e29b-41d4-a716-446655440000",
+        "message_type": "question",
+        "timestamp": "2025-10-16T10:30:45Z",
+        "sender": {
+          "agent_id": "claude-agent-a"
+        },
+        "recipient": {
+          "agent_id": "claude-agent-b"
+        },
+        "routing": {
+          "path": [
+            "claude-agent-a",
+            "relay-firewall",
+            "claude-agent-b"
+          ],
+          "hop_count": 3,
+          "max_hops": 3,
+          "visited_agents": [
+            "claude-agent-a"
+          ],
+          "next_hop": "relay-firewall"
+        },
+        "content": {
+          "subject": "Test",
+          "body": "Multi-hop message"
+        }
+      }
+    },
+
+    "loop_detection": {
+      "description": "Detect routing loops (agent appears twice in visited list)",
+      "expected_result": "drop_message",
+      "message": {
+        "protocol_version": "0.1.0",
+        "message_id": "loop-test-001",
+        "message_type": "question",
+        "timestamp": "2025-10-16T10:30:45Z",
+        "sender": {
+          "agent_id": "claude-agent-a"
+        },
+        "recipient": {
+          "agent_id": "claude-agent-b"
+        },
+        "routing": {
+          "path": [
+            "claude-agent-a",
+            "relay-1",
+            "relay-2",
+            "relay-1",
+            "claude-agent-b"
+          ],
+          "hop_count": 3,
+          "max_hops": 5,
+          "visited_agents": [
+            "claude-agent-a",
+            "relay-1",
+            "relay-2",
+            "relay-1"
+          ],
+          "next_hop": "claude-agent-b",
+          "loop_detected": true
+        },
+        "content": {
+          "subject": "Test",
+          "body": "Loop detection test"
+        }
+      }
+    },
+
+    "complex_path": {
+      "description": "Complex routing path through multiple relays",
+      "expected_result": "forward",
+      "message": {
+        "protocol_version": "0.1.0",
+        "message_id": "complex-path-001",
+        "message_type": "question",
+        "timestamp": "2025-10-16T10:30:45Z",
+        "sender": {
+          "agent_id": "claude-source"
+        },
+        "recipient": {
+          "agent_id": "claude-destination"
+        },
+        "routing": {
+          "path": [
+            "claude-source",
+            "relay-gateway",
+            "relay-firewall",
+            "relay-loadbalancer",
+            "relay-proxy",
+            "claude-destination"
+          ],
+          "hop_count": 2,
+          "max_hops": 6,
+          "visited_agents": [
+            "claude-source",
+            "relay-gateway",
+            "relay-firewall"
+          ],
+          "next_hop": "relay-loadbalancer"
+        },
+        "content": {
+          "subject": "Complex routing test",
+          "body": "Testing multi-relay routing"
+        }
+      }
+    }
+  },
+
+  "routing_rules": {
+    "max_hops": 10,
+    "loop_detection": "enabled",
+    "hop_count_starts_at": 0,
+    "visited_agents_required": true,
+    "path_validation": "strict"
+  },
+
+  "test_scenarios": [
+    {
+      "name": "normal_multihop_flow",
+      "steps": ["basic_multihop", "intermediate_hop", "final_destination"],
+      "expected_outcome": "message_delivered"
+    },
+    {
+      "name": "hop_limit_exceeded",
+      "steps": ["exceeded_max_hops"],
+      "expected_outcome": "message_dropped"
+    },
+    {
+      "name": "routing_loop",
+      "steps": ["loop_detection"],
+      "expected_outcome": "message_dropped"
+    }
+  ]
+}

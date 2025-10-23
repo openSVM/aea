@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "on_message_received": "http://localhost:9000/received",
+  "on_message_processed": "http://localhost:9000/processed",
+  "on_message_failed": "http://localhost:9000/failed",
+  "retry_policy": {
+    "max_retries": 3,
+    "backoff_ms": 1000,
+    "timeout_ms": 5000
+  }
+}

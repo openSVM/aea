@@ -1,0 +1,44 @@
+# AEA Protocol - Git Ignore Rules
+
+# Log files
+*.log
+agent.log
+logs/*.log
+logs/webhooks.log
+
+# Processed message markers
+.processed/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Correlation tracking
+.dedup-cache.json
+correlation/request-tracking.json
+retry/agent-health-learning.json
+
+# Monitoring
+.monitor.pid
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# Environment files (may contain secrets)
+.env
+.env.local
+
+# Message files (optional - uncomment if you don't want to track messages in git)
+# message-*.json
+# !tests/**/message-*.json
+
+# Review and analysis documents
+.reviews/

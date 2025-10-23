@@ -1,0 +1,30 @@
+{
+  "protocol_version": "2.2",
+  "message_id": "550e8400-e29b-41d4-a716-446655440000",
+  "message_type": "question",
+  "timestamp": "2025-10-16T10:30:45Z",
+  "sender": {
+    "agent_id": "claude-agent-a"
+  },
+  "recipient": {
+    "agent_id": "claude-agent-b"
+  },
+  "routing": {
+    "path": [
+      "claude-agent-a",
+      "relay-firewall",
+      "claude-agent-b"
+    ],
+    "hop_count": 1,
+    "max_hops": 3,
+    "visited_agents": [
+      "claude-agent-a",
+      "relay-firewall"
+    ],
+    "next_hop": "relay-firewall"
+  },
+  "content": {
+    "subject": "Test",
+    "body": "Multi-hop message"
+  }
+}

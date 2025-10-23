@@ -1,0 +1,301 @@
+# AEA Autonomous Agent Configuration v0.1.0
+# This configures Claude Code agents to automatically monitor and respond to
+# inter-agent messages without manual intervention.
+
+agent:
+  id: "claude-aea"
+  type: "claude-sonnet-4.5"
+  role: "AEA Protocol Developer"
+  repository: "."  # Relative to .aea directory
+  protocol_version: "0.1.0"
+
+  expertise:
+    - "software-development"
+    - "system-architecture"
+    - "code-analysis"
+    - "documentation"
+    - "testing"
+    - "debugging"
+
+# Automatic message monitoring
+monitoring:
+  enabled: true
+  check_interval: 300  # Check every 5 minutes
+
+  # Directories to monitor for incoming messages
+  watch_directories:
+    - "./.aea"  # Local repository messages (relative to script location)
+
+  # Auto-process messages matching these criteria
+  auto_process:
+    - message_type: "question"
+      requires_response: true
+      action: "auto_respond"
+
+    - message_type: "update"
+      requires_response: false
+      action: "acknowledge"
+
+    - message_type: "issue"
+      severity: ["low", "medium"]
+      action: "analyze_and_respond"
+
+    - message_type: "issue"
+      severity: ["high", "urgent"]
+      action: "notify_and_wait_approval"
+
+    - message_type: "handoff"
+      action: "review_and_acknowledge"
+
+    - message_type: "request"
+      action: "evaluate_and_respond"
+
+# Response policies
+response_policies:
+  questions:
+    # Auto-respond to technical questions about this codebase
+    auto_respond_when:
+      - topic: "code-structure"
+      - topic: "performance-tuning"
+      - topic: "integration-help"
+      - topic: "api-documentation"
+      - topic: "build-issues"
+      - topic: "configuration"
+
+    # Require approval for these
+    require_approval_when:
+      - topic: "architecture-changes"
+      - topic: "security-concerns"
+      - topic: "breaking-changes"
+
+  issues:
+    # Auto-analyze and suggest fixes
+    auto_analyze_when:
+      - severity: "low"
+      - severity: "medium"
+      - category: "documentation"
+      - category: "performance"
+
+    # Require approval to implement fixes
+    require_approval_for_implementation: true
+
+    # Immediately notify for critical issues
+    notify_immediately_when:
+      - severity: "urgent"
+      - severity: "critical"
+      - category: "security"
+      - category: "data-loss"
+
+  updates:
+    # Auto-acknowledge routine updates
+    auto_acknowledge: true
+
+    # Read and summarize important updates
+    summarize_when:
+      - priority: "high"
+      - priority: "urgent"
+
+# Agent tasks - These will be executed by Claude Code agents
+agent_tasks:
+
+  # Task 1: Monitor for new messages
+  - name: "monitor_messages"
+    type: "general-purpose"
+    schedule: "*/5 * * * *"  # Every 5 minutes (cron format)
+    prompt: |
+      Check for new AEA messages in .aea/ directories.
+
+      Repositories to monitor:
+      - ./.aea (relative to script location)
+
+      For each new message file (message-*.json) that hasn't been processed:
+      1. Read the message
+      2. Determine if it's for this agent
+      3. Check the message type and priority
+      4. Apply the response policy from agent-config.yaml
+      5. If auto-process is enabled, respond accordingly
+      6. Mark message as processed by creating .processed file
+
+      Return a summary of:
+      - Messages found
+      - Messages processed
+      - Responses sent
+      - Any errors
+
+  # Task 2: Answer technical questions
+  - name: "answer_questions"
+    type: "general-purpose"
+    trigger: "message_type:question"
+    prompt: |
+      A technical question has been received from another agent.
+
+      Question details: {message}
+
+      As the codebase expert, provide a comprehensive answer:
+      1. Read relevant code/documentation
+      2. Provide specific examples (file paths, commands, code snippets)
+      3. Reference CLAUDE.md and README.md where applicable
+      4. Be concise but thorough
+      5. Include performance considerations if relevant
+
+      Create a response message following AEA protocol and save to:
+      {target_repo}/.aea/message-{timestamp}-from-{agent_id}.json
+
+  # Task 3: Analyze reported issues
+  - name: "analyze_issues"
+    type: "general-purpose"
+    trigger: "message_type:issue"
+    prompt: |
+      An issue has been reported by another agent.
+
+      Issue details: {message}
+
+      Analyze the issue:
+      1. Review the issue description and severity
+      2. Search codebase for related code
+      3. Determine if issue is within this codebase or in integration layer
+      4. Propose a fix (describe, don't implement)
+      5. Estimate complexity and risk
+
+      If severity is low/medium: auto-respond with analysis
+      If severity is high/urgent: notify user and request approval
+
+      Create response message or approval request as appropriate.
+
+  # Task 4: Process handoffs
+  - name: "process_handoffs"
+    type: "general-purpose"
+    trigger: "message_type:handoff"
+    prompt: |
+      A handoff message has been received from another agent.
+
+      Handoff details: {message}
+
+      Process the handoff:
+      1. Review what was built
+      2. Understand how to use it
+      3. Identify next steps
+      4. Check for any integration issues
+      5. Review documentation created
+
+      Respond with:
+      - Acknowledgment of receipt
+      - Summary of understanding
+      - Any questions or concerns
+      - Confirmation of next steps
+
+      Save response to: {target_repo}/.aea/message-{timestamp}-from-{agent_id}.json
+
+  # Task 5: Acknowledge updates
+  - name: "acknowledge_updates"
+    type: "general-purpose"
+    trigger: "message_type:update"
+    prompt: |
+      An update has been received from another agent.
+
+      Update details: {message}
+
+      If requires_response is true:
+      1. Acknowledge receipt
+      2. Summarize key points
+      3. Note any action items
+
+      If high priority:
+      1. Read and analyze the update
+      2. Determine if any action is needed in this codebase
+      3. Create response with recommendations
+
+      Simple acknowledgment for routine updates.
+
+# Notification settings
+notifications:
+  # Notify user when these events occur
+  notify_on:
+    - event: "high_priority_message"
+      method: "stdout"
+
+    - event: "urgent_issue"
+      method: "stdout"
+
+    - event: "approval_needed"
+      method: "stdout"
+
+    - event: "response_sent"
+      method: "log"
+
+    - event: "processing_error"
+      method: "stdout"
+
+  # Optional: external notification commands
+  # notify_command: "notify-send 'AEA Message' '{message}'"
+  # notify_email: "user@example.com"
+
+# Conversation history
+history:
+  enabled: true
+  max_messages_per_agent: 20
+  storage_path: "./.aea/history"  # Relative to script location
+
+  # Track conversations with these agents (example agent IDs)
+  track_agents:
+    - "claude-agent-1"
+    - "claude-agent-2"
+    - "any-claude-instance"
+
+# Safety and constraints
+safety:
+  # Never auto-execute these actions
+  require_approval_for:
+    - "code_changes"
+    - "configuration_changes"
+    - "deployment_actions"
+    - "database_modifications"
+    - "security_changes"
+
+  # Always safe to auto-execute
+  allow_auto_execution:
+    - "read_files"
+    - "search_codebase"
+    - "analyze_code"
+    - "generate_documentation"
+    - "answer_questions"
+    - "create_response_messages"
+
+  # Maximum message age to process (seconds)
+  max_message_age: 86400  # 24 hours
+
+  # Skip messages older than this
+  ignore_messages_older_than: "7 days"
+
+# Integration with other repos (optional)
+# Example configuration for tracking related repositories
+# Uncomment and customize as needed
+#
+# integrations:
+#   other_repo:
+#     path: "../other_repo"  # Relative path example
+#     agent_id: "claude-other-repo"
+#     relationship: "consumer|provider|peer"
+#
+#     topics_of_interest:
+#       - "integration-questions"
+#       - "api-usage"
+#       - "configuration-help"
+#
+#     can_auto_respond_about:
+#       - "code-structure"
+#       - "performance-optimization"
+#       - "error-handling"
+
+# Logging
+logging:
+  level: "INFO"
+  file: "./.aea/agent.log"  # Relative to script location
+
+  log_events:
+    - "message_received"
+    - "message_processed"
+    - "response_sent"
+    - "error_occurred"
+    - "approval_requested"
+    - "auto_action_taken"
