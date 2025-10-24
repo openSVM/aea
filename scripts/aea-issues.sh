@@ -31,43 +31,59 @@ load_config() {
         return 1
     fi
 
-    # Extract GitHub repo from config
-    GITHUB_REPO=$(awk '/github_integration:/,/^[^ ]/ {
-        if ($1 == "repository:") {
-            gsub(/"/, "", $2)
-            print $2
-            exit
-        }
-    }' "$config_file")
-
-    # Extract enabled status
-    ENABLED=$(awk '/github_integration:/,/^[^ ]/ {
-        if ($1 == "enabled:") {
-            print $2
-            exit
-        }
-    }' "$config_file")
-
-    # Extract labels to monitor
-    LABELS=$(awk '/github_integration:/,/^[^ ]/ {
-        if ($1 == "labels:") {
-            getline
-            while ($0 ~ /^[[:space:]]+-/) {
-                gsub(/^[[:space:]]+-[[:space:]]+/, "")
-                gsub(/"/, "")
-                printf "%s,", $0
-                getline
+    # Extract GitHub repo from config (from github_integration section only)
+    GITHUB_REPO=$(awk '
+        /^github_integration:/ { in_section = 1; next }
+        in_section && /^[^ ]/ && !/^  / { exit }
+        in_section && /^  repository:/ {
+            # Extract value between quotes
+            if (match($0, /"[^"]+"/)) {
+                result = substr($0, RSTART+1, RLENGTH-2)
+                print result
+                exit
             }
         }
-    }' "$config_file" | sed 's/,$//')
+    ' "$config_file")
 
-    # Extract check interval (minutes)
-    CHECK_INTERVAL=$(awk '/github_integration:/,/^[^ ]/ {
-        if ($1 == "check_interval_minutes:") {
-            print $2
+    # Extract enabled status
+    ENABLED=$(awk '
+        /^github_integration:/ { in_section = 1; next }
+        in_section && /^[^ ]/ { exit }
+        in_section && /^  enabled:/ {
+            gsub(/.*: */, "")
+            gsub(/ *#.*/, "")
+            print
             exit
         }
-    }' "$config_file")
+    ' "$config_file")
+
+    # Extract labels to monitor
+    LABELS=$(awk '
+        /^github_integration:/ { in_section = 1; next }
+        in_section && /^[^ ]/ { exit }
+        in_section && /^  labels:/ {
+            in_labels = 1
+            next
+        }
+        in_labels && /^    -/ {
+            gsub(/^    - *"?/, "")
+            gsub(/".*/, "")
+            printf "%s,", $0
+        }
+        in_labels && /^  [^ ]/ { exit }
+    ' "$config_file" | sed 's/,$//')
+
+    # Extract check interval (minutes)
+    CHECK_INTERVAL=$(awk '
+        /^github_integration:/ { in_section = 1; next }
+        in_section && /^[^ ]/ { exit }
+        in_section && /^  check_interval_minutes:/ {
+            gsub(/.*: */, "")
+            gsub(/ *#.*/, "")
+            print
+            exit
+        }
+    ' "$config_file")
 
     # Defaults
     ENABLED="${ENABLED:-false}"
@@ -121,9 +137,25 @@ fetch_issues() {
     # Build gh issue list command
     local gh_cmd="gh issue list --repo $repo --limit $limit --state open"
 
-    # Add label filter if specified
+    # Add label filters (OR condition - match ANY label)
     if [ -n "$labels" ]; then
-        gh_cmd="$gh_cmd --label \"$labels\""
+        # Convert comma-separated labels to space-separated for iteration
+        local label_list=$(echo "$labels" | tr ',' ' ')
+
+        # Build label filter string with OR logic
+        local label_filter=""
+        for label in $label_list; do
+            if [ -z "$label_filter" ]; then
+                label_filter="$label"
+            else
+                label_filter="$label_filter,$label"
+            fi
+        done
+
+        # Note: gh CLI uses OR logic for comma-separated labels
+        if [ -n "$label_filter" ]; then
+            gh_cmd="$gh_cmd --label \"$label_filter\""
+        fi
     fi
 
     # Fetch issues
@@ -213,8 +245,9 @@ display_issues() {
     echo ""
 
     # Parse and display issues with relevance scoring
+    # gh CLI format: NUMBER\tSTATE\tTITLE\tLABELS\tDATE
     local issue_data=""
-    while IFS=$'\t' read -r number title labels assignees; do
+    while IFS=$'\t' read -r number state title labels date; do
         local score=$(match_issue_to_context "$title" "$labels" "$context")
 
         # Format issue line

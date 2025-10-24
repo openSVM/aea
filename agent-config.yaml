@@ -292,11 +292,11 @@ github_integration:
   enabled: true  # Set to true to enable GitHub issues checking
   repository: "openSVM/aea"  # Format: "owner/repo"
 
-  # Check for issues with these labels
+  # Check for issues with these labels (leave empty to show all)
   labels:
-    - "bug"
-    - "enhancement"
-    - "good first issue"
+    # - "bug"
+    # - "enhancement"
+    # - "good first issue"
 
   # How often to check for new issues (in minutes)
   check_interval_minutes: 60
