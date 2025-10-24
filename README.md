@@ -1,6 +1,6 @@
 # AEA - Agentic Economic Activity Protocol
 
-**Version 0.1.0** | **Status: Beta** | [Documentation](docs/) | [Security](docs/SECURITY.md) | [Examples](docs/EXAMPLES.md)
+**Version 0.1.0** | **Status: Beta** | [Documentation](docs/) | [Security](docs/SECURITY.md) | [Examples](docs/EXAMPLES.md) | [GitHub Integration](docs/GITHUB_INTEGRATION.md)
 
 Complete autonomous agent communication system for Claude Code with automatic message processing and background monitoring.
 
@@ -74,6 +74,7 @@ This system enables **fully autonomous inter-agent communication** with:
 ✅ **Background monitoring** service for continuous operation
 ✅ **PID management** with health checks and graceful failover
 ✅ **Multi-project support** via centralized configuration
+✨ **GitHub Issues integration** - automatically checks relevant issues based on your work context
 
 ---
 

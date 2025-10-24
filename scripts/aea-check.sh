@@ -48,6 +48,12 @@ for msg in "$AEA_DIR"/message-*.json; do
     fi
 done
 
+# Check GitHub issues if enabled (silent if disabled)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/aea-issues.sh" ]; then
+    "$SCRIPT_DIR/aea-issues.sh" 2>/dev/null || true
+fi
+
 # Report findings
 if [ ${#unprocessed[@]} -eq 0 ]; then
     echo -e "${GREEN}✅ No new AEA messages${NC}"

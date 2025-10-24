@@ -136,6 +136,7 @@ install_aea() {
         "scripts/aea-cleanup.sh:.aea/scripts/"
         "scripts/aea-common.sh:.aea/scripts/"
         "scripts/aea-validate-message.sh:.aea/scripts/"
+        "scripts/aea-issues.sh:.aea/scripts/"
         "scripts/process-messages-iterative.sh:.aea/scripts/"
         "scripts/uninstall-aea.sh:.aea/scripts/"
         "scripts/setup-global-alias.sh:.aea/scripts/"

@@ -287,6 +287,25 @@ safety:
 #       - "performance-optimization"
 #       - "error-handling"
 
+# GitHub Integration
+github_integration:
+  enabled: true  # Set to true to enable GitHub issues checking
+  repository: "openSVM/aea"  # Format: "owner/repo"
+
+  # Check for issues with these labels
+  labels:
+    - "bug"
+    - "enhancement"
+    - "good first issue"
+
+  # How often to check for new issues (in minutes)
+  check_interval_minutes: 60
+
+  # Match issues to current work context
+  context_matching:
+    enabled: true
+    relevance_threshold: 5  # Score threshold for "relevant" issues
+
 # Logging
 logging:
   level: "INFO"
