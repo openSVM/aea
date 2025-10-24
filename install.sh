@@ -72,7 +72,17 @@ EOF
 install_aea() {
     local target_dir="${1:-.}"
 
-    # Resolve absolute path
+    # Validate and resolve absolute path
+    if [ ! -d "$target_dir" ]; then
+        log_error "Directory does not exist: $target_dir"
+        exit 1
+    fi
+
+    if [ ! -w "$target_dir" ]; then
+        log_error "Directory is not writable: $target_dir"
+        exit 1
+    fi
+
     target_dir="$(cd "$target_dir" && pwd)"
 
     log_info "Installing AEA Protocol in: $target_dir"
@@ -80,10 +90,18 @@ install_aea() {
     # Check if .aea already exists
     if [ -d "$target_dir/.aea" ]; then
         log_warning ".aea directory already exists in $target_dir"
-        echo -e "${YELLOW}Options:${NC}"
-        echo "  1) Backup and reinstall"
-        echo "  2) Cancel installation"
-        read -p "Choose (1/2): " choice
+
+        # Check if running interactively (not piped)
+        if [ -t 0 ]; then
+            echo -e "${YELLOW}Options:${NC}"
+            echo "  1) Backup and reinstall"
+            echo "  2) Cancel installation"
+            read -p "Choose (1/2): " choice
+        else
+            # Non-interactive mode: auto-backup
+            log_info "Non-interactive mode detected. Auto-backing up existing installation."
+            choice="1"
+        fi
 
         case "$choice" in
             1)
@@ -163,14 +181,29 @@ install_aea() {
 
     # Generate unique agent ID
     log_step "Configuring agent..."
-    local agent_id="agent-$(date +%s)-$(head -c 4 /dev/urandom | xxd -p)"
+    # Portable random ID generation
+    if [ -c /dev/urandom ]; then
+        local agent_id="agent-$(date +%s)-$(head -c 4 /dev/urandom | od -An -tx1 | tr -d ' \n')"
+    else
+        local agent_id="agent-$(date +%s)-$(printf '%04x' $$)"
+    fi
     local project_name="$(basename "$target_dir")"
 
-    # Update agent-config.yaml
+    # Update agent-config.yaml (portable sed)
     if [ -f "$target_dir/.aea/agent-config.yaml" ]; then
-        sed -i.bak "s/id: .*/id: \"${agent_id}\"/" "$target_dir/.aea/agent-config.yaml"
-        sed -i.bak "s/name: .*/name: \"${project_name}\"/" "$target_dir/.aea/agent-config.yaml"
-        rm -f "$target_dir/.aea/agent-config.yaml.bak"
+        local temp_config="$target_dir/.aea/agent-config.yaml.tmp"
+        awk -v id="$agent_id" -v name="$project_name" '
+            /^  id:/ { print "  id: \"" id "\""; next }
+            /^  name:/ { print "  name: \"" name "\""; next }
+            { print }
+        ' "$target_dir/.aea/agent-config.yaml" > "$temp_config"
+
+        if [ -s "$temp_config" ]; then
+            mv "$temp_config" "$target_dir/.aea/agent-config.yaml"
+        else
+            log_error "Failed to update agent-config.yaml"
+            rm -f "$temp_config"
+        fi
     fi
 
     # Setup .claude directory for hooks
@@ -188,12 +221,25 @@ Check for AEA messages and process them:
 EOF
 
     # Setup hooks in .claude/settings.json
+    # Preserve existing settings by merging
     if [ -f "$target_dir/.claude/settings.json" ]; then
-        # Backup existing settings
+        log_step "Merging with existing Claude Code settings..."
         cp "$target_dir/.claude/settings.json" "$target_dir/.claude/settings.json.bak"
-    fi
 
-    cat > "$target_dir/.claude/settings.json" << 'EOF'
+        # Check if jq is available for proper JSON merging
+        if command -v jq &>/dev/null; then
+            local temp_settings="$target_dir/.claude/settings.json.tmp"
+            jq '.hooks.SessionStart = "bash .aea/scripts/aea-check.sh" |
+                .hooks.UserPromptSubmit = "bash .aea/scripts/aea-check.sh" |
+                .hooks.Stop = "bash .aea/scripts/aea-check.sh"' \
+                "$target_dir/.claude/settings.json" > "$temp_settings"
+
+            if [ -s "$temp_settings" ]; then
+                mv "$temp_settings" "$target_dir/.claude/settings.json"
+            else
+                rm -f "$temp_settings"
+                log_warning "Failed to merge settings. Creating new settings file."
+                cat > "$target_dir/.claude/settings.json" << 'EOF'
 {
   "hooks": {
     "SessionStart": "bash .aea/scripts/aea-check.sh",
@@ -202,6 +248,31 @@ EOF
   }
 }
 EOF
+            fi
+        else
+            log_warning "jq not found. Existing settings will be overwritten."
+            log_warning "Backup saved to: .claude/settings.json.bak"
+            cat > "$target_dir/.claude/settings.json" << 'EOF'
+{
+  "hooks": {
+    "SessionStart": "bash .aea/scripts/aea-check.sh",
+    "UserPromptSubmit": "bash .aea/scripts/aea-check.sh",
+    "Stop": "bash .aea/scripts/aea-check.sh"
+  }
+}
+EOF
+        fi
+    else
+        cat > "$target_dir/.claude/settings.json" << 'EOF'
+{
+  "hooks": {
+    "SessionStart": "bash .aea/scripts/aea-check.sh",
+    "UserPromptSubmit": "bash .aea/scripts/aea-check.sh",
+    "Stop": "bash .aea/scripts/aea-check.sh"
+  }
+}
+EOF
+    fi
 
     # Update .gitignore
     log_step "Updating .gitignore..."
