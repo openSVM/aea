@@ -1,19 +1,15 @@
 # AEA Protocol - Quick Start
 
-## Install in 30 Seconds
+## Install in 10 Seconds
 
 ```bash
-# 1. Clone AEA
-git clone https://github.com/openSVM/aea && cd aea
-
-# 2. Go to your project
-cd /path/to/your/project
-
-# 3. Run installer
-bash /path/to/aea/install.sh
+# One-liner: Run from your project directory
+curl -fsSL https://raw.githubusercontent.com/openSVM/aea/main/install.sh | bash
 ```
 
 Done! ✅
+
+**Note**: Requires `bash`. For POSIX `sh`, use manual install (see README.md).
 
 ---
 

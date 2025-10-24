@@ -8,29 +8,29 @@ Complete autonomous agent communication system for Claude Code with automatic me
 
 ## 🚀 **Installation**
 
-### Quick Install (New Smart Installer!)
+### One-Line Install (Recommended)
 
 ```bash
-# Clone the AEA repository
-git clone https://github.com/openSVM/aea
-cd aea
-
-# Go to your project and run the smart installer
-cd /path/to/your/project
-bash /path/to/aea/install.sh
+curl -fsSL https://raw.githubusercontent.com/openSVM/aea/main/install.sh | bash
 ```
 
 **That's it!** The installer automatically:
-- ✅ Detects your project type (100+ languages supported)
-- ✅ Installs in the right location
-- ✅ Handles existing installations (repair/backup)
-- ✅ Creates project-specific configuration
+- ✅ Downloads all required files from GitHub
+- ✅ Creates `.aea/` directory structure
+- ✅ Sets up Claude Code integration
+- ✅ Configures automatic message checking
 
-### Alternative: Legacy Installer
+**Note**: This requires `bash`. If you only have `sh`, use the manual method below.
+
+### Manual Install (For POSIX sh compatibility)
 
 ```bash
-# Use the legacy installer if needed
-bash /path/to/aea/scripts/install-aea.sh /path/to/target/repo
+# Clone the repository
+git clone https://github.com/openSVM/aea
+cd aea
+
+# Run the local installer
+bash scripts/install-aea.sh /path/to/your/project
 ```
 
 📖 **[Read the full installation guide →](INSTALL_GUIDE.md)**
