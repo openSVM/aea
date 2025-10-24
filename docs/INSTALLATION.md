@@ -82,9 +82,9 @@ brew install fd ripgrep
 ### Step 1: Clone the AEA Repository
 
 ```bash
-# Clone from GitHub (update URL when available)
+# Clone from GitHub
 cd ~/projects  # or wherever you keep code
-git clone https://github.com/your-org/aea.git
+git clone https://github.com/openSVM/aea.git
 cd aea
 ```
 
@@ -789,8 +789,8 @@ Before you start using AEA, ensure:
 - **Clean up old messages?** Run `bash .aea/scripts/aea-cleanup.sh`
 
 ### Report Issues
-- GitHub Issues: (Update with real URL)
-- Security Issues: security@example.com (DO NOT use public issues)
+- GitHub Issues: https://github.com/openSVM/aea/issues
+- Security Issues: https://github.com/openSVM/aea/issues (use "security" label)
 
 ---
 
