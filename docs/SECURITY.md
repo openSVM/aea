@@ -356,7 +356,7 @@ Before using AEA in any environment:
 Found a security vulnerability? **DO NOT** create a public issue.
 
 Contact:
-- Email: security@example.com (update with real contact)
+- Email: GitHub Issues: https://github.com/openSVM/aea/issues
 - PGP Key: [Coming soon]
 
 We follow responsible disclosure and will acknowledge reports within 48 hours.

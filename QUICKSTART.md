@@ -4,7 +4,7 @@
 
 ```bash
 # 1. Clone AEA
-git clone https://github.com/yourusername/aea && cd aea
+git clone https://github.com/openSVM/aea && cd aea
 
 # 2. Go to your project
 cd /path/to/your/project

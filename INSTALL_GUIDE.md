@@ -4,7 +4,7 @@
 
 ```bash
 # Download AEA
-git clone https://github.com/yourusername/aea.git
+git clone https://github.com/openSVM/aea.git
 cd aea
 
 # Install in any project

@@ -134,7 +134,7 @@ git push origin v0.1.0
 ### **4. Test Installation (Fresh Repo)**
 ```bash
 # Clone to test directory
-git clone https://github.com/yourusername/aea /tmp/test-aea
+git clone https://github.com/openSVM/aea /tmp/test-aea
 cd /tmp/test-rust-project
 
 # Run installer
@@ -213,7 +213,7 @@ bash .aea/aea.sh check
 
 ### **Quick Start (30 seconds)**
 ```bash
-git clone https://github.com/yourusername/aea
+git clone https://github.com/openSVM/aea
 cd /my/project
 bash /path/to/aea/install.sh
 ```

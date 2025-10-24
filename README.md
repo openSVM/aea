@@ -12,7 +12,7 @@ Complete autonomous agent communication system for Claude Code with automatic me
 
 ```bash
 # Clone the AEA repository
-git clone https://github.com/yourusername/aea
+git clone https://github.com/openSVM/aea
 cd aea
 
 # Go to your project and run the smart installer
