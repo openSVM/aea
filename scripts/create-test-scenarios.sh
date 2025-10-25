@@ -19,7 +19,15 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AEA_DIR="$(dirname "$SCRIPT_DIR")"
-PROJECT_ROOT="$(dirname "$AEA_DIR")"
+
+# Detect if we're in the development repo or installed in .aea/
+if [ -f "$AEA_DIR/PROTOCOL.md" ] && [ -f "$AEA_DIR/aea.sh" ]; then
+    # Development repo: AEA_DIR is the repo root, use it directly
+    PROJECT_ROOT="$AEA_DIR"
+else
+    # Installed: AEA_DIR is .aea/, PROJECT_ROOT is parent
+    PROJECT_ROOT="$(dirname "$AEA_DIR")"
+fi
 
 if ! cd "$PROJECT_ROOT"; then
     echo "ERROR: Failed to change to project root: $PROJECT_ROOT"
@@ -76,29 +84,25 @@ create_simple_question() {
 
     cat > "$filename" << 'EOF'
 {
-  "protocol_version": "1.0",
+  "protocol_version": "0.1.0",
   "message_id": "test-simple-question",
   "message_type": "question",
   "timestamp": "2025-10-14T16:00:00Z",
-  "priority": "normal",
-  "requires_response": true,
-  "from": {
+  "sender": {
     "agent_id": "claude-test",
     "repo_path": "/tmp/test",
     "user": "developer"
   },
-  "to": {
-    "agent_id": "claude-current",
-    "repo_path": "/current/path"
+  "recipient": {
+    "agent_id": "claude-current"
   },
-  "message": {
+  "routing": {
+    "priority": "normal",
+    "requires_response": true
+  },
+  "content": {
     "subject": "How to optimize orderbook insertion performance?",
-    "body": "We're seeing slow orderbook insertions at high load. What are the recommended optimization strategies? Are there any SIMD optimizations available?",
-    "context": {
-      "current_throughput": "150 orders/sec",
-      "target_throughput": "500 orders/sec",
-      "current_method": "single-threaded insertion"
-    }
+    "body": "We're seeing slow orderbook insertions at high load. What are the recommended optimization strategies? Are there any SIMD optimizations available?\n\nContext:\n- Current throughput: 150 orders/sec\n- Target throughput: 500 orders/sec\n- Current method: single-threaded insertion"
   },
   "metadata": {
     "conversation_id": "test-simple-question",
@@ -119,40 +123,25 @@ create_urgent_issue() {
 
     cat > "$filename" << 'EOF'
 {
-  "protocol_version": "1.0",
+  "protocol_version": "0.1.0",
   "message_id": "test-urgent-issue",
   "message_type": "issue",
   "timestamp": "2025-10-14T16:05:00Z",
-  "priority": "urgent",
-  "requires_response": true,
-  "from": {
+  "sender": {
     "agent_id": "claude-agent-b",
     "repo_path": "/path/to/repo-b",
     "user": "developer"
   },
-  "to": {
-    "agent_id": "claude-agent-a",
-    "repo_path": "/path/to/repo-a"
+  "recipient": {
+    "agent_id": "claude-agent-a"
   },
-  "message": {
+  "routing": {
+    "priority": "urgent",
+    "requires_response": true
+  },
+  "content": {
     "subject": "🚨 URGENT: Memory leak in production causing OOM",
-    "issue_description": "Production Redis instance experiencing memory leak. Memory usage growing 500MB/hour. Will hit OOM in ~3 hours.",
-    "reproduction_steps": [
-      "Start Redis with module loaded",
-      "Send 10k orderbook updates per second",
-      "Monitor memory with INFO MEMORY",
-      "Observe steady growth without corresponding data increase"
-    ],
-    "impact": "CRITICAL - Production stability at risk. Service will crash in ~3 hours without intervention.",
-    "logs": "Last 1000 lines show repeated FFI string allocations without corresponding frees",
-    "environment": {
-      "redis_version": "7.0.12",
-      "module_version": "latest",
-      "load": "10k updates/sec",
-      "memory_growth_rate": "500MB/hour",
-      "current_memory": "4.2GB",
-      "max_memory": "6GB"
-    }
+    "body": "Production Redis instance experiencing memory leak. Memory usage growing 500MB/hour. Will hit OOM in ~3 hours.\n\nReproduction steps:\n1. Start Redis with module loaded\n2. Send 10k orderbook updates per second\n3. Monitor memory with INFO MEMORY\n4. Observe steady growth without corresponding data increase\n\nImpact: CRITICAL - Production stability at risk. Service will crash in ~3 hours without intervention.\n\nLogs: Last 1000 lines show repeated FFI string allocations without corresponding frees\n\nEnvironment:\n- Redis version: 7.0.12\n- Module version: latest\n- Load: 10k updates/sec\n- Memory growth rate: 500MB/hour\n- Current memory: 4.2GB\n- Max memory: 6GB"
   },
   "metadata": {
     "conversation_id": "urgent-memory-leak",
@@ -173,44 +162,25 @@ create_handoff() {
 
     cat > "$filename" << 'EOF'
 {
-  "protocol_version": "1.0",
+  "protocol_version": "0.1.0",
   "message_id": "test-handoff",
   "message_type": "handoff",
   "timestamp": "2025-10-14T16:10:00Z",
-  "priority": "high",
-  "requires_response": true,
-  "from": {
+  "sender": {
     "agent_id": "claude-agent-b",
     "repo_path": "/path/to/repo-b",
     "user": "developer"
   },
-  "to": {
-    "agent_id": "claude-agent-a",
-    "repo_path": "/path/to/repo-a"
+  "recipient": {
+    "agent_id": "claude-agent-a"
   },
-  "message": {
+  "routing": {
+    "priority": "high",
+    "requires_response": true
+  },
+  "content": {
     "subject": "Batch API integration complete - ready for client updates",
-    "handoff_details": "Implemented batch orderbook insertion API with connection pooling. Server-side changes are complete and tested. Ready for client integration.",
-    "completed_work": [
-      "Batch insertion endpoint: ORDERBOOKMAP.BATCH.INSERT",
-      "Connection pool management with configurable pool_size",
-      "Error handling with partial success support",
-      "Performance testing: 257 orders/sec concurrent throughput",
-      "Documentation in docs/batch-api.md"
-    ],
-    "next_steps": [
-      "Update client to use batch API instead of single inserts",
-      "Configure connection pool size (recommended: 25-30 for 10k updates/sec)",
-      "Implement client-side batching logic",
-      "Add retry logic for failed batches",
-      "End-to-end integration testing"
-    ],
-    "breaking_changes": [
-      "Single insert API still supported but deprecated",
-      "New error response format for batch operations"
-    ],
-    "documentation": "See repo-b/docs/batch-api.md and repo-a/CLAUDE.md:2239-2247",
-    "migration_guide": "repo-b/docs/migration-to-batch-api.md"
+    "body": "Implemented batch orderbook insertion API with connection pooling. Server-side changes are complete and tested. Ready for client integration.\n\nCompleted work:\n- Batch insertion endpoint: ORDERBOOKMAP.BATCH.INSERT\n- Connection pool management with configurable pool_size\n- Error handling with partial success support\n- Performance testing: 257 orders/sec concurrent throughput\n- Documentation in docs/batch-api.md\n\nNext steps:\n- Update client to use batch API instead of single inserts\n- Configure connection pool size (recommended: 25-30 for 10k updates/sec)\n- Implement client-side batching logic\n- Add retry logic for failed batches\n- End-to-end integration testing\n\nBreaking changes:\n- Single insert API still supported but deprecated\n- New error response format for batch operations\n\nDocumentation: See repo-b/docs/batch-api.md and repo-a/CLAUDE.md:2239-2247\nMigration guide: repo-b/docs/migration-to-batch-api.md"
   },
   "metadata": {
     "conversation_id": "batch-api-integration",
@@ -231,37 +201,25 @@ create_update() {
 
     cat > "$filename" << 'EOF'
 {
-  "protocol_version": "1.0",
+  "protocol_version": "0.1.0",
   "message_id": "test-update",
   "message_type": "update",
   "timestamp": "2025-10-14T16:15:00Z",
-  "priority": "normal",
-  "requires_response": true,
-  "from": {
+  "sender": {
     "agent_id": "claude-agent-b",
     "repo_path": "/path/to/repo-b",
     "user": "developer"
   },
-  "to": {
-    "agent_id": "claude-agent-a",
-    "repo_path": "/path/to/repo-a"
+  "recipient": {
+    "agent_id": "claude-agent-a"
   },
-  "message": {
+  "routing": {
+    "priority": "normal",
+    "requires_response": true
+  },
+  "content": {
     "subject": "Deployed batch API v2.1.0 to staging",
-    "body": "Successfully deployed new batch API version to staging environment. All tests passing.",
-    "changes": [
-      "batch_size: 50 -> 100 (2x throughput improvement)",
-      "pool_size: 10 -> 25 (better concurrency handling)",
-      "Added connection retry logic with exponential backoff",
-      "Improved error messages for batch validation failures"
-    ],
-    "metrics": {
-      "deployment_time": "2025-10-14T15:45:00Z",
-      "downtime": "0 seconds (rolling deployment)",
-      "test_results": "112/112 passing",
-      "performance_improvement": "2.3x throughput increase"
-    },
-    "next_deployment": "Production deployment scheduled for 2025-10-15 if no issues found"
+    "body": "Successfully deployed new batch API version to staging environment. All tests passing.\n\nChanges:\n- batch_size: 50 -> 100 (2x throughput improvement)\n- pool_size: 10 -> 25 (better concurrency handling)\n- Added connection retry logic with exponential backoff\n- Improved error messages for batch validation failures\n\nMetrics:\n- Deployment time: 2025-10-14T15:45:00Z\n- Downtime: 0 seconds (rolling deployment)\n- Test results: 112/112 passing\n- Performance improvement: 2.3x throughput increase\n\nNext deployment: Production deployment scheduled for 2025-10-15 if no issues found"
   },
   "metadata": {
     "conversation_id": "deployment-updates",
@@ -282,47 +240,25 @@ create_complex_request() {
 
     cat > "$filename" << 'EOF'
 {
-  "protocol_version": "1.0",
+  "protocol_version": "0.1.0",
   "message_id": "test-complex-request",
   "message_type": "request",
   "timestamp": "2025-10-14T16:20:00Z",
-  "priority": "normal",
-  "requires_response": true,
-  "from": {
+  "sender": {
     "agent_id": "claude-agent-b",
     "repo_path": "/path/to/repo-b",
     "user": "developer"
   },
-  "to": {
-    "agent_id": "claude-agent-a",
-    "repo_path": "/path/to/repo-a"
+  "recipient": {
+    "agent_id": "claude-agent-a"
   },
-  "message": {
+  "routing": {
+    "priority": "normal",
+    "requires_response": true
+  },
+  "content": {
     "subject": "Add streaming orderbook updates API",
-    "request_details": "Need a streaming API for orderbook updates to reduce latency and network overhead compared to polling.",
-    "rationale": "Current polling approach has 100ms latency minimum. Streaming would provide <10ms latency for critical price updates.",
-    "requirements": [
-      "Redis PUBLISH/SUBSCRIBE for orderbook changes",
-      "Client library with auto-reconnection",
-      "Filtering by exchange and trading pair",
-      "Delta updates only (not full snapshots)",
-      "Backpressure handling for slow consumers"
-    ],
-    "acceptance_criteria": [
-      "Latency < 10ms for price updates",
-      "Support 1000+ concurrent subscribers",
-      "Automatic reconnection on connection loss",
-      "Message ordering guarantees",
-      "Comprehensive error handling"
-    ],
-    "constraints": [
-      "Must work with existing ORDERBOOKMAP commands",
-      "No breaking changes to current API",
-      "Memory overhead < 1MB per subscriber",
-      "Redis version 7.0+ compatible"
-    ],
-    "timeline": "Target: 2 weeks for initial implementation",
-    "priority_justification": "High-frequency trading clients need real-time updates. Current latency losing trades to competitors."
+    "body": "Need a streaming API for orderbook updates to reduce latency and network overhead compared to polling.\n\nRationale: Current polling approach has 100ms latency minimum. Streaming would provide <10ms latency for critical price updates.\n\nRequirements:\n- Redis PUBLISH/SUBSCRIBE for orderbook changes\n- Client library with auto-reconnection\n- Filtering by exchange and trading pair\n- Delta updates only (not full snapshots)\n- Backpressure handling for slow consumers\n\nAcceptance criteria:\n- Latency < 10ms for price updates\n- Support 1000+ concurrent subscribers\n- Automatic reconnection on connection loss\n- Message ordering guarantees\n- Comprehensive error handling\n\nConstraints:\n- Must work with existing ORDERBOOKMAP commands\n- No breaking changes to current API\n- Memory overhead < 1MB per subscriber\n- Redis version 7.0+ compatible\n\nTimeline: Target: 2 weeks for initial implementation\n\nPriority justification: High-frequency trading clients need real-time updates. Current latency losing trades to competitors."
   },
   "metadata": {
     "conversation_id": "streaming-api-request",

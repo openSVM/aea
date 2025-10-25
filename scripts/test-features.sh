@@ -53,8 +53,19 @@ get_iso_date() {
 date_offset() {
     local offset="$1"  # e.g., "-1h" or "-50m"
     if date --version >/dev/null 2>&1; then
-        # GNU date
-        date -u -d "$offset" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ
+        # GNU date - convert -1h to "1 hour ago" format
+        local num="${offset#-}"  # Remove leading dash
+        local value="${num%[hm]}"  # Extract number
+        local unit="${num: -1}"  # Extract h or m
+        local gnu_offset=""
+        if [ "$unit" = "h" ]; then
+            gnu_offset="$value hour ago"
+        elif [ "$unit" = "m" ]; then
+            gnu_offset="$value minute ago"
+        else
+            gnu_offset="now"
+        fi
+        date -u -d "$gnu_offset" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ
     else
         # BSD date
         date -u -v"$offset" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ

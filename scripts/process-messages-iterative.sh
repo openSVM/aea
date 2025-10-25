@@ -12,32 +12,21 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Configuration - resolve .aea directory from script location
-# Handle both cases: script in scripts/ subdirectory or in .aea/ root
-SCRIPT_REAL_PATH="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || realpath "${BASH_SOURCE[0]}" 2>/dev/null || echo "${BASH_SOURCE[0]}")"
-SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_REAL_PATH")" && pwd)"
+# Configuration - Use .aea relative to working directory (matches aea-check.sh)
+AEA_DIR=".aea"
 
-# Find .aea directory (parent of scripts/ or current if scripts don't exist)
-if [ "$(basename "$SCRIPT_DIR")" = "scripts" ]; then
-    AEA_DIR="$(dirname "$SCRIPT_DIR")"
-else
-    AEA_DIR="$SCRIPT_DIR"
-fi
-
-# Validate we're in an AEA directory
-if [ ! -d "$AEA_DIR/.processed" ] && [ ! -f "$AEA_DIR/agent-config.yaml" ]; then
-    echo "ERROR: Could not locate .aea directory from script location"
-    echo "Script: $SCRIPT_REAL_PATH"
-    echo "Resolved AEA_DIR: $AEA_DIR"
+# Validate we're in correct directory
+if [ ! -d "$AEA_DIR" ]; then
+    echo -e "${RED}❌ Error: Not running from correct directory. AEA directory not found.${NC}"
     exit 1
 fi
+
+# Ensure .processed directory exists
+mkdir -p "$AEA_DIR/.processed"
 
 AGENT_ID=$(grep "^  id:" "$AEA_DIR/agent-config.yaml" 2>/dev/null | sed 's/.*"\(.*\)".*/\1/' || echo "claude-aea")
 PROCESSED_DIR="${AEA_DIR}/.processed"
 LOG_FILE="${AEA_DIR}/agent.log"
-
-# Ensure directories exist
-mkdir -p "$PROCESSED_DIR"
 
 # Logging function
 log_action() {
