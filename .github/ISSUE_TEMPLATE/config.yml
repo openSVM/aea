@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/openSVM/aea/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📖 Documentation
+    url: https://github.com/openSVM/aea#-documentation
+    about: Read the complete AEA Protocol documentation
+  - name: 🔧 Troubleshooting Guide
+    url: https://github.com/openSVM/aea/blob/main/docs/TROUBLESHOOTING.md
+    about: Fix common problems and issues
+  - name: ❓ FAQ
+    url: https://github.com/openSVM/aea/blob/main/docs/FAQ.md
+    about: Frequently asked questions

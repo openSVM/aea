@@ -575,8 +575,12 @@ bash .aea/scripts/aea-send.sh --type update --subject "[DEPLOY] ..." --message "
 - 🔧 [Troubleshooting Guide](TROUBLESHOOTING.md)
 - 💡 [Examples](EXAMPLES.md)
 - 🔒 [Security Guide](SECURITY.md)
-- 🐛 [Report an issue](https://github.com/openSVM/aea/issues)
-- 💬 [Start a discussion](https://github.com/openSVM/aea/discussions)
+
+**Get Help:**
+- 🐛 **[Report a Bug](https://github.com/openSVM/aea/issues/new?template=bug_report.md)** - Found a problem?
+- ✨ **[Request a Feature](https://github.com/openSVM/aea/issues/new?template=feature_request.md)** - Have an idea?
+- ❓ **[Ask a Question](https://github.com/openSVM/aea/issues/new?template=question.md)** - Need help?
+- 💬 **[Start a Discussion](https://github.com/openSVM/aea/discussions)** - General discussion
 
 ---
 

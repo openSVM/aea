@@ -600,4 +600,26 @@ logging:
 
 ---
 
-**Need more help?** [Create an issue](https://github.com/openSVM/aea/issues) or check the [FAQ](FAQ.md).
+## 💬 Still Need Help?
+
+If you can't resolve your issue:
+
+### 🐛 Report a Bug
+**[Report Bug](https://github.com/openSVM/aea/issues/new?template=bug_report.md)** - Use our bug report template
+
+### ❓ Ask a Question
+**[Ask Question](https://github.com/openSVM/aea/issues/new?template=question.md)** - Get help from the community
+
+### 💭 Discuss
+**[Start Discussion](https://github.com/openSVM/aea/discussions)** - General questions and ideas
+
+### 📖 More Resources
+- **[FAQ](FAQ.md)** - Frequently asked questions
+- **[Examples](EXAMPLES.md)** - Real-world usage scenarios
+- **[Agent Guide](AGENT_GUIDE.md)** - Agent behavior guidelines
+
+When reporting issues, please include:
+- Error messages from logs (`.aea/agent.log`)
+- Your environment (OS, bash version, jq version)
+- Relevant configuration (`.aea/agent-config.yaml`)
+- Steps to reproduce the problem

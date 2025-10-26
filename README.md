@@ -856,3 +856,30 @@ bash .aea/scripts/aea-monitor.sh start
 ```
 
 Your agents will communicate autonomously! 🤖🚀
+
+---
+
+## 💬 **Feedback & Support**
+
+We'd love to hear from you! Here's how to get help or contribute:
+
+### 🐛 Found a Bug?
+**[Report a Bug](https://github.com/openSVM/aea/issues/new?template=bug_report.md)**
+
+### ✨ Have a Feature Idea?
+**[Request a Feature](https://github.com/openSVM/aea/issues/new?template=feature_request.md)**
+
+### ❓ Need Help?
+**[Ask a Question](https://github.com/openSVM/aea/issues/new?template=question.md)**
+
+### 💭 Want to Discuss?
+**[Start a Discussion](https://github.com/openSVM/aea/discussions)**
+
+### 📖 Check First
+Before creating an issue, please check:
+- **[FAQ](docs/FAQ.md)** - Common questions
+- **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Fix common problems
+- **[Existing Issues](https://github.com/openSVM/aea/issues)** - See if it's already reported
+
+### 🤝 Contributing
+Want to contribute code or documentation? See **[CONTRIBUTING.md](CONTRIBUTING.md)**

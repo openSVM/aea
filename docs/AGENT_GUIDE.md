@@ -644,10 +644,16 @@ Before processing any message, ask yourself:
 
 ## Need Help?
 
+**Documentation:**
 - **[FAQ](FAQ.md)** - Common questions
 - **[Examples](EXAMPLES.md)** - Real scenarios
 - **[Protocol](../PROTOCOL.md)** - Message format
 - **[Troubleshooting](TROUBLESHOOTING.md)** - Problem solving
+
+**Get Support:**
+- 🐛 **[Report Bug](https://github.com/openSVM/aea/issues/new?template=bug_report.md)** - Found an issue?
+- ❓ **[Ask Question](https://github.com/openSVM/aea/issues/new?template=question.md)** - Need clarification?
+- ✨ **[Request Feature](https://github.com/openSVM/aea/issues/new?template=feature_request.md)** - Have an idea?
 
 ---
 

@@ -737,4 +737,12 @@ After running all tests, you should have verified:
 
 ---
 
-**Questions?** See [FAQ](FAQ.md) or [report an issue](https://github.com/openSVM/aea/issues).
+## 💬 Found an Issue?
+
+If tests are failing or you've found a bug:
+
+**[🐛 Report Bug](https://github.com/openSVM/aea/issues/new?template=bug_report.md)** - Use our bug report template
+
+**[❓ Ask Question](https://github.com/openSVM/aea/issues/new?template=question.md)** - Get help with testing
+
+**[📖 FAQ](FAQ.md)** - Check frequently asked questions first
