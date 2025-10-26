@@ -1,6 +1,6 @@
 # AEA - Agentic Economic Activity Protocol
 
-**Version 0.1.0** | **Status: Beta** | [Documentation](docs/) | [Security](docs/SECURITY.md) | [Examples](docs/EXAMPLES.md) | [GitHub Integration](docs/GITHUB_INTEGRATION.md)
+**Version 0.1.0** | **Status: Beta** | [Documentation](docs/) | [FAQ](docs/FAQ.md) | [Troubleshooting](docs/TROUBLESHOOTING.md) | [Architecture](docs/ARCHITECTURE.md) | [Examples](docs/EXAMPLES.md)
 
 Complete autonomous agent communication system for Claude Code with automatic message processing and background monitoring.
 
@@ -795,13 +795,26 @@ bash .aea/scripts/aea-monitor.sh start
 
 ---
 
-## 📖 **Further Reading**
+## 📖 **Documentation**
 
+### Quick Links
+- **[FAQ](docs/FAQ.md)** - Frequently asked questions
+- **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Architecture](docs/ARCHITECTURE.md)** - How AEA works internally
+- **[Examples](docs/EXAMPLES.md)** - Real-world usage examples
+- **[Security](docs/SECURITY.md)** - Security considerations
+- **[Installation Guide](INSTALL_GUIDE.md)** - Detailed installation instructions
+
+### Technical References
+- **[Protocol Specification](PROTOCOL.md)** - Message format and schema
+- **[GitHub Integration](docs/GITHUB_INTEGRATION.md)** - GitHub Issues integration
+- **[Global Command](docs/GLOBAL_COMMAND.md)** - Global 'a' command setup
+- **[AEA Rules](docs/aea-rules.md)** - Complete protocol rules
+
+### Configuration
 - **`agent-config.yaml`** - Response policies and configuration
-- **`agent-launcher.md`** - Detailed usage guide
-- **`docs/aea-rules.md`** - Complete AEA protocol specification
-- **`PROTOCOL.md`** - Technical protocol details
-- **`CLAUDE.md`** - Automatic checking instructions
+- **`.claude/settings.json`** - Hook configuration
+- **`~/.config/aea/agents.yaml`** - Agent registry
 
 ---
 
