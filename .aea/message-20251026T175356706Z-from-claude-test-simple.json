@@ -1,0 +1,26 @@
+{
+  "protocol_version": "0.1.0",
+  "message_id": "test-simple-question",
+  "message_type": "question",
+  "timestamp": "2025-10-14T16:00:00Z",
+  "sender": {
+    "agent_id": "claude-test",
+    "repo_path": "/tmp/test",
+    "user": "developer"
+  },
+  "recipient": {
+    "agent_id": "claude-current"
+  },
+  "routing": {
+    "priority": "normal",
+    "requires_response": true
+  },
+  "content": {
+    "subject": "How to optimize orderbook insertion performance?",
+    "body": "We're seeing slow orderbook insertions at high load. What are the recommended optimization strategies? Are there any SIMD optimizations available?\n\nContext:\n- Current throughput: 150 orders/sec\n- Target throughput: 500 orders/sec\n- Current method: single-threaded insertion"
+  },
+  "metadata": {
+    "conversation_id": "test-simple-question",
+    "tags": ["performance", "optimization"]
+  }
+}

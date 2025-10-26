@@ -54,6 +54,16 @@ info() {
     echo -e "${BLUE}[AEA Monitor]${NC} $1"
 }
 
+send_notification() {
+    local title="$1"
+    local message="$2"
+    
+    # Optional: Send desktop notification if available
+    if command -v notify-send &> /dev/null; then
+        notify-send "$title" "$message" -i dialog-information -t 10000 2>/dev/null || true
+    fi
+}
+
 #===============================================================================
 # PID Management
 #===============================================================================
@@ -346,6 +356,9 @@ check_project_messages() {
             timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
             echo "[$timestamp] Monitor found $unprocessed_count unprocessed messages" >> ".aea/agent.log"
         fi
+
+        # Send desktop notification
+        send_notification "AEA Monitor" "New messages in $project_name"
 
         # TODO: In future, this would trigger Claude via API
         # For now, just log that messages are waiting
