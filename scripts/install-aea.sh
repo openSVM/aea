@@ -556,6 +556,22 @@ else
     log_warning "PROTOCOL.md not found in source, skipping..."
 fi
 
+# Copy all documentation from docs/ directory
+if [ -d "$AEA_SOURCE_DIR/docs" ]; then
+    log_info "Copying comprehensive documentation..."
+
+    # Copy all markdown files from docs/
+    for doc_file in "$AEA_SOURCE_DIR/docs"/*.md; do
+        if [ -f "$doc_file" ]; then
+            filename=$(basename "$doc_file")
+            cp "$doc_file" ".aea/docs/$filename"
+            log_success "Copied docs/$filename"
+        fi
+    done
+else
+    log_warning "docs/ directory not found in source, skipping comprehensive docs..."
+fi
+
 # ==============================================================================
 # 4. Create README.md
 # ==============================================================================
@@ -648,7 +664,14 @@ log_success "Created README.md"
 
 log_info "Creating prompts/check-messages.md..."
 
-cat > .aea/prompts/check-messages.md << 'EOF'
+# Copy from source if available, otherwise create inline
+if [ -f "$AEA_SOURCE_DIR/prompts/check-messages.md" ]; then
+    cp "$AEA_SOURCE_DIR/prompts/check-messages.md" .aea/prompts/check-messages.md
+    log_success "Copied prompts/check-messages.md from source"
+else
+    # Fallback: create inline version
+    log_warning "Source prompt not found, creating basic version..."
+    cat > .aea/prompts/check-messages.md << 'EOF'
 # AEA Inter-Agent Communication Check
 
 Check for new inter-agent messages and process them autonomously according to agent-config.yaml policy.
@@ -728,8 +751,8 @@ You are the autonomous agent `claude-$(basename $(pwd))`.
 - **Use absolute paths** in all file operations
 - **Follow AEA protocol** from `.aea/docs/aea-rules.md`
 EOF
-
-log_success "Created check-messages.md"
+    log_success "Created check-messages.md (inline fallback)"
+fi
 
 # ==============================================================================
 # 6. Create aea-check.sh script

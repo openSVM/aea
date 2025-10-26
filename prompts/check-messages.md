@@ -104,3 +104,19 @@ comm -23 \
   <(ls -1 .aea/.processed/*.json 2>/dev/null | xargs -n1 basename | sort) \
   | wc -l
 ```
+
+---
+
+## Help & Documentation
+
+**Essential Reading:**
+- **.aea/docs/AGENT_GUIDE.md** - Complete agent behavior guidelines
+- **.aea/docs/FAQ.md** - Frequently asked questions
+- **.aea/docs/TROUBLESHOOTING.md** - Fix common problems
+- **.aea/docs/EXAMPLES.md** - Real-world scenarios
+
+**Need Help?**
+- 🐛 [Report Bug](https://github.com/openSVM/aea/issues/new?template=bug_report.md)
+- ❓ [Ask Question](https://github.com/openSVM/aea/issues/new?template=question.md)
+- ✨ [Request Feature](https://github.com/openSVM/aea/issues/new?template=feature_request.md)
+- 💬 [Discussions](https://github.com/openSVM/aea/discussions)
