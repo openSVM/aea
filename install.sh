@@ -1,15 +1,15 @@
-#!/usr/bin/env bash
-# AEA Protocol - Standalone Installer
+#!/bin/sh
+# AEA Protocol - Standalone Installer (POSIX-compatible)
 # Downloads and installs AEA from GitHub
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/openSVM/aea/main/install.sh | bash
-#   bash install.sh [TARGET_DIR]
-#   bash install.sh --help
+#   curl -fsSL https://aea.sh | sh
+#   sh install.sh [TARGET_DIR]
+#   sh install.sh --help
 
-set -euo pipefail
+set -eu
 
-# Colors
+# Colors (will work in most terminals, degrade gracefully)
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -26,20 +26,20 @@ GITHUB_RAW_URL="https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH
 # Helper Functions
 # ==============================================================================
 
-log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
-log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
-log_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
-log_step() { echo -e "${CYAN}▶${NC} $1"; }
+log_info() { printf "${BLUE}[INFO]${NC} %s\n" "$1"; }
+log_success() { printf "${GREEN}[SUCCESS]${NC} %s\n" "$1"; }
+log_warning() { printf "${YELLOW}[WARNING]${NC} %s\n" "$1"; }
+log_error() { printf "${RED}[ERROR]${NC} %s\n" "$1"; }
+log_step() { printf "${CYAN}▶${NC} %s\n" "$1"; }
 
 show_help() {
-    cat << EOF
+    cat << 'EOF'
 AEA Protocol - Standalone Installer
 
 USAGE:
-    curl -fsSL https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/install.sh | bash
-    bash install.sh [TARGET_DIR]
-    bash install.sh --help
+    curl -fsSL https://aea.sh | sh
+    sh install.sh [TARGET_DIR]
+    sh install.sh --help
 
 OPTIONS:
     TARGET_DIR      Directory to install AEA (default: current directory)
@@ -47,13 +47,13 @@ OPTIONS:
 
 EXAMPLES:
     # Install in current directory
-    bash install.sh
+    sh install.sh
 
     # Install in specific directory
-    bash install.sh /path/to/project
+    sh install.sh /path/to/project
 
     # One-liner from anywhere
-    curl -fsSL https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/install.sh | bash
+    curl -fsSL https://aea.sh | sh
 
 WHAT IT DOES:
     1. Downloads AEA files from GitHub
@@ -65,12 +65,35 @@ EOF
     exit 0
 }
 
+# Download a single file
+download_file() {
+    source_file="$1"
+    dest_path="$2"
+    url="${GITHUB_RAW_URL}/${source_file}"
+    dest="${target_dir}/${dest_path}$(basename "$source_file")"
+
+    # Special case for CLAUDE_INSTALLED.md -> CLAUDE.md
+    case "$source_file" in
+        templates/CLAUDE_INSTALLED.md)
+            dest="${target_dir}/.aea/CLAUDE.md"
+            ;;
+    esac
+
+    if curl -fsSL "$url" -o "$dest" 2>/dev/null; then
+        printf "  ${GREEN}✓${NC} %s\n" "$(basename "$source_file")"
+        return 0
+    else
+        printf "  ${RED}✗${NC} %s\n" "$(basename "$source_file")"
+        return 1
+    fi
+}
+
 # ==============================================================================
 # Main Installation Logic
 # ==============================================================================
 
 install_aea() {
-    local target_dir="${1:-.}"
+    target_dir="${1:-.}"
 
     # Validate and resolve absolute path
     if [ ! -d "$target_dir" ]; then
@@ -93,10 +116,11 @@ install_aea() {
 
         # Check if running interactively (not piped)
         if [ -t 0 ]; then
-            echo -e "${YELLOW}Options:${NC}"
-            echo "  1) Backup and reinstall"
-            echo "  2) Cancel installation"
-            read -p "Choose (1/2): " choice
+            printf "${YELLOW}Options:${NC}\n"
+            printf "  1) Backup and reinstall\n"
+            printf "  2) Cancel installation\n"
+            printf "Choose (1/2): "
+            read -r choice
         else
             # Non-interactive mode: auto-backup
             log_info "Non-interactive mode detected. Auto-backing up existing installation."
@@ -105,7 +129,7 @@ install_aea() {
 
         case "$choice" in
             1)
-                local backup_dir="$HOME/.aea/backups/backup-$(date +%Y%m%d-%H%M%S)"
+                backup_dir="$HOME/.aea/backups/backup-$(date +%Y%m%d-%H%M%S)"
                 mkdir -p "$backup_dir"
                 log_step "Backing up to $backup_dir"
                 cp -r "$target_dir/.aea" "$backup_dir/"
@@ -120,54 +144,38 @@ install_aea() {
 
     # Create directory structure
     log_step "Creating .aea directory structure..."
-    mkdir -p "$target_dir/.aea"/{scripts,prompts,docs,.processed}
+    mkdir -p "$target_dir/.aea/scripts"
+    mkdir -p "$target_dir/.aea/prompts"
+    mkdir -p "$target_dir/.aea/docs"
+    mkdir -p "$target_dir/.aea/.processed"
 
     # Download core files
     log_step "Downloading AEA files from GitHub..."
 
-    local files_to_download=(
-        "aea.sh:.aea/"
-        "agent-config.yaml:.aea/"
-        "PROTOCOL.md:.aea/"
-        "scripts/aea-check.sh:.aea/scripts/"
-        "scripts/aea-send.sh:.aea/scripts/"
-        "scripts/aea-monitor.sh:.aea/scripts/"
-        "scripts/aea-registry.sh:.aea/scripts/"
-        "scripts/aea-cleanup.sh:.aea/scripts/"
-        "scripts/aea-common.sh:.aea/scripts/"
-        "scripts/aea-validate-message.sh:.aea/scripts/"
-        "scripts/aea-issues.sh:.aea/scripts/"
-        "scripts/process-messages-iterative.sh:.aea/scripts/"
-        "scripts/uninstall-aea.sh:.aea/scripts/"
-        "scripts/setup-global-alias.sh:.aea/scripts/"
-        "prompts/check-messages.md:.aea/prompts/"
-        "templates/CLAUDE_INSTALLED.md:.aea/CLAUDE.md"
-        "docs/aea-rules.md:.aea/docs/"
-        "docs/GETTING_STARTED.md:.aea/docs/"
-        "docs/EXAMPLES.md:.aea/docs/"
-        "docs/SECURITY.md:.aea/docs/"
-        "docs/INSTALLATION.md:.aea/docs/"
-    )
+    failed_downloads=0
 
-    local failed_downloads=0
-    for file_mapping in "${files_to_download[@]}"; do
-        local source_file="${file_mapping%%:*}"
-        local dest_path="${file_mapping##*:}"
-        local url="${GITHUB_RAW_URL}/${source_file}"
-        local dest="${target_dir}/${dest_path}$(basename "$source_file")"
-
-        # Special case for CLAUDE_INSTALLED.md -> CLAUDE.md
-        if [[ "$source_file" == "templates/CLAUDE_INSTALLED.md" ]]; then
-            dest="${target_dir}/.aea/CLAUDE.md"
-        fi
-
-        if curl -fsSL "$url" -o "$dest"; then
-            echo -e "  ${GREEN}✓${NC} $(basename "$source_file")"
-        else
-            echo -e "  ${RED}✗${NC} $(basename "$source_file")"
-            ((failed_downloads++))
-        fi
-    done
+    # Download files one by one (POSIX-compatible, no arrays)
+    download_file "aea.sh" ".aea/" || failed_downloads=$((failed_downloads + 1))
+    download_file "agent-config.yaml" ".aea/" || failed_downloads=$((failed_downloads + 1))
+    download_file "PROTOCOL.md" ".aea/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/aea-check.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/aea-send.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/aea-monitor.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/aea-registry.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/aea-cleanup.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/aea-common.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/aea-validate-message.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/aea-issues.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/process-messages-iterative.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/uninstall-aea.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "scripts/setup-global-alias.sh" ".aea/scripts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "prompts/check-messages.md" ".aea/prompts/" || failed_downloads=$((failed_downloads + 1))
+    download_file "templates/CLAUDE_INSTALLED.md" ".aea/" || failed_downloads=$((failed_downloads + 1))
+    download_file "docs/aea-rules.md" ".aea/docs/" || failed_downloads=$((failed_downloads + 1))
+    download_file "docs/GETTING_STARTED.md" ".aea/docs/" || failed_downloads=$((failed_downloads + 1))
+    download_file "docs/EXAMPLES.md" ".aea/docs/" || failed_downloads=$((failed_downloads + 1))
+    download_file "docs/SECURITY.md" ".aea/docs/" || failed_downloads=$((failed_downloads + 1))
+    download_file "docs/INSTALLATION.md" ".aea/docs/" || failed_downloads=$((failed_downloads + 1))
 
     if [ $failed_downloads -gt 0 ]; then
         log_error "Failed to download $failed_downloads file(s)"
@@ -184,15 +192,15 @@ install_aea() {
     log_step "Configuring agent..."
     # Portable random ID generation
     if [ -c /dev/urandom ]; then
-        local agent_id="agent-$(date +%s)-$(head -c 4 /dev/urandom | od -An -tx1 | tr -d ' \n')"
+        agent_id="agent-$(date +%s)-$(head -c 4 /dev/urandom | od -An -tx1 | tr -d ' \n')"
     else
-        local agent_id="agent-$(date +%s)-$(printf '%04x' $$)"
+        agent_id="agent-$(date +%s)-$(printf '%04x' $$)"
     fi
-    local project_name="$(basename "$target_dir")"
+    project_name="$(basename "$target_dir")"
 
-    # Update agent-config.yaml (portable sed)
+    # Update agent-config.yaml (portable awk)
     if [ -f "$target_dir/.aea/agent-config.yaml" ]; then
-        local temp_config="$target_dir/.aea/agent-config.yaml.tmp"
+        temp_config="$target_dir/.aea/agent-config.yaml.tmp"
         awk -v id="$agent_id" -v name="$project_name" '
             /^  id:/ { print "  id: \"" id "\""; next }
             /^  name:/ { print "  name: \"" name "\""; next }
@@ -228,8 +236,8 @@ EOF
         cp "$target_dir/.claude/settings.json" "$target_dir/.claude/settings.json.bak"
 
         # Check if jq is available for proper JSON merging
-        if command -v jq &>/dev/null; then
-            local temp_settings="$target_dir/.claude/settings.json.tmp"
+        if command -v jq >/dev/null 2>&1; then
+            temp_settings="$target_dir/.claude/settings.json.tmp"
             jq '.hooks.SessionStart = "bash .aea/scripts/aea-check.sh" |
                 .hooks.UserPromptSubmit = "bash .aea/scripts/aea-check.sh" |
                 .hooks.Stop = "bash .aea/scripts/aea-check.sh"' \
@@ -289,25 +297,25 @@ EOF
     touch "$target_dir/.aea/agent.log"
 
     # Success message
-    echo ""
+    printf "\n"
     log_success "AEA Protocol installed successfully!"
-    echo ""
-    echo -e "${CYAN}Next Steps:${NC}"
-    echo "  1. Read the guide: cat .aea/CLAUDE.md"
-    echo "  2. Check for messages: bash .aea/scripts/aea-check.sh"
-    echo "  3. Use the /aea command in Claude Code"
-    echo ""
-    echo -e "${CYAN}Documentation:${NC}"
-    echo "  • .aea/CLAUDE.md - Complete usage guide"
-    echo "  • .aea/PROTOCOL.md - Protocol specification"
-    echo "  • .aea/docs/ - Additional documentation"
-    echo ""
-    echo -e "${CYAN}Automatic Checking:${NC}"
-    echo "  Claude Code will automatically check for AEA messages on:"
-    echo "  • Session start"
-    echo "  • Before processing prompts"
-    echo "  • After completing tasks"
-    echo ""
+    printf "\n"
+    printf "${CYAN}Next Steps:${NC}\n"
+    printf "  1. Read the guide: cat .aea/CLAUDE.md\n"
+    printf "  2. Check for messages: bash .aea/scripts/aea-check.sh\n"
+    printf "  3. Use the /aea command in Claude Code\n"
+    printf "\n"
+    printf "${CYAN}Documentation:${NC}\n"
+    printf "  • .aea/CLAUDE.md - Complete usage guide\n"
+    printf "  • .aea/PROTOCOL.md - Protocol specification\n"
+    printf "  • .aea/docs/ - Additional documentation\n"
+    printf "\n"
+    printf "${CYAN}Automatic Checking:${NC}\n"
+    printf "  Claude Code will automatically check for AEA messages on:\n"
+    printf "  • Session start\n"
+    printf "  • Before processing prompts\n"
+    printf "  • After completing tasks\n"
+    printf "\n"
 }
 
 # ==============================================================================
