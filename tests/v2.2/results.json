@@ -1,6 +1,6 @@
 {
   "test_suite": "AEA v2.2 Features",
-  "timestamp": "2025-10-22T06:20:21Z",
+  "timestamp": "2025-10-25T08:56:21Z",
   "tests": [
     {
       "name": "1.1: Register request",
@@ -19,8 +19,8 @@
     },
     {
       "name": "1.4: Timeout detection",
-      "status": "fail",
-      "message": "Timeout detection failed"
+      "status": "pass",
+      "message": "Timeout detection works (1 requests timed out)"
     },
     {
       "name": "2.1: High reliability detected",
@@ -89,8 +89,8 @@
     }
   ],
   "summary": {
-    "passed": 16,
-    "failed": 1,
+    "passed": 17,
+    "failed": 0,
     "total": 17
   }
 }

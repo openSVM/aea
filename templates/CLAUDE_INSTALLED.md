@@ -22,6 +22,19 @@ AEA is installed in the `.aea/` subdirectory. All AEA-related commands should be
 
 **Working Directory**: All AEA commands assume you're in the repository root unless otherwise noted.
 
+### 🤖 For Claude Code Agents
+
+**⭐ START HERE:** Read [.aea/docs/AGENT_GUIDE.md](.aea/docs/AGENT_GUIDE.md) to learn:
+- When to auto-process vs ask for approval
+- Safety guidelines for autonomous operation
+- Message type handling (questions, issues, handoffs, etc.)
+- Priority-based decision making
+
+**Quick rules:**
+- ✅ Auto-process: questions, updates, responses with normal/low priority
+- ⚠️ Ask user: urgent messages, handoffs, code changes
+- 🛡️ Safety first: when in doubt, ask the user
+
 ---
 
 ## Automatic Checking
@@ -402,14 +415,26 @@ chmod +x .aea/scripts/*.sh
 
 ---
 
-## Key Files
+## Key Files & Documentation
 
+### Essential Reading for Agents
+- **[.aea/docs/AGENT_GUIDE.md](.aea/docs/AGENT_GUIDE.md)** ⭐ - How to use AEA autonomously and safely
+- **[.aea/docs/TESTING.md](.aea/docs/TESTING.md)** - Verify AEA is working correctly
+- **[.aea/docs/EXAMPLES.md](.aea/docs/EXAMPLES.md)** - Real-world usage scenarios
+- **[.aea/docs/FAQ.md](.aea/docs/FAQ.md)** - Frequently asked questions
+
+### Configuration & Scripts
 - **.aea/agent-config.yaml** - Agent configuration and response policies
-- **.aea/PROTOCOL.md** - Protocol specification (v0.1.0)
 - **.aea/scripts/aea-check.sh** - Primary message checking script
+- **.aea/scripts/aea-send.sh** - Send messages to other agents
 - **.aea/scripts/aea-monitor.sh** - Background monitoring daemon
 - **.aea/scripts/process-messages-iterative.sh** - Interactive message processor
-- **.aea/docs/aea-rules.md** - Complete protocol rules for agent integration
+
+### Reference Documentation
+- **[.aea/PROTOCOL.md](.aea/PROTOCOL.md)** - Protocol specification (v0.1.0)
+- **[.aea/docs/aea-rules.md](.aea/docs/aea-rules.md)** - Complete protocol rules
+- **[.aea/docs/ARCHITECTURE.md](.aea/docs/ARCHITECTURE.md)** - How AEA works internally
+- **[.aea/docs/TROUBLESHOOTING.md](.aea/docs/TROUBLESHOOTING.md)** - Fix common problems
 
 ---
 

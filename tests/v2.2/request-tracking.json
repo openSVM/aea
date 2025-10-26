@@ -1,19 +1,19 @@
 {
   "active_requests": {
-    "9d9e39ce-9a24-4720-8928-f6c07d916d92": {
+    "6b8cdcaa-23c7-47f5-a989-cbd66b5bf22c": {
       "to": "claude-agent-b",
       "message_type": "question",
       "subject": "Old question",
-      "sent_at": "2025-10-22T06:20:21Z",
-      "expected_response_by": "2025-10-22T06:20:21Z",
+      "sent_at": "2025-10-25T07:56:21Z",
+      "expected_response_by": "2025-10-25T08:06:21Z",
       "status": "pending"
     }
   },
   "completed_requests": {
-    "863e5959-ef11-4f55-9c18-f7be4ad4d527": {
+    "31652ac8-83ae-4bab-a599-7ece275367ce": {
       "to": "claude-agent-b",
-      "response_message_id": "dfd087cb-cbe2-45fa-825b-1c8e3b93cdba",
-      "received_at": "2025-10-22T06:20:21Z",
+      "response_message_id": "2022bd7e-06ad-4097-8e66-a75cce2da59f",
+      "received_at": "2025-10-25T08:56:21Z",
       "status": "success"
     }
   }
