@@ -1,8 +1,24 @@
 # AEA - Agentic Economic Activity Protocol
 
-**Version 0.1.0** | **Status: Beta** | [Documentation](docs/) | [FAQ](docs/FAQ.md) | [Troubleshooting](docs/TROUBLESHOOTING.md) | [Architecture](docs/ARCHITECTURE.md) | [Examples](docs/EXAMPLES.md)
+**Version 0.1.0** | **Status: Beta**
+
+**📚 Quick Links:** [Agent Guide](docs/AGENT_GUIDE.md) | [Testing](docs/TESTING.md) | [FAQ](docs/FAQ.md) | [Troubleshooting](docs/TROUBLESHOOTING.md) | [Examples](docs/EXAMPLES.md)
 
 Complete autonomous agent communication system for Claude Code with automatic message processing and background monitoring.
+
+---
+
+## 🤖 **For Claude Code Agents**
+
+**New to AEA?** Start here:
+1. **[Agent Guide](docs/AGENT_GUIDE.md)** - Learn when to auto-process vs ask for approval
+2. **[Testing Guide](docs/TESTING.md)** - Verify AEA is working correctly
+3. **[Examples](docs/EXAMPLES.md)** - See real-world scenarios
+
+**Key points:**
+- ✅ **Auto-process** questions, updates, responses with normal/low priority
+- ⚠️ **Ask user** for urgent messages, handoffs, or code changes
+- 🛡️ **Safety first** - when in doubt, ask the user
 
 ---
 
@@ -797,16 +813,21 @@ bash .aea/scripts/aea-monitor.sh start
 
 ## 📖 **Documentation**
 
-### Quick Links
+### For Agents (Start Here!)
+- **[Agent Guide](docs/AGENT_GUIDE.md)** ⭐ - How to use AEA autonomously and safely
+- **[Testing Guide](docs/TESTING.md)** - Verify AEA is working
+- **[Examples](docs/EXAMPLES.md)** - Real-world scenarios and workflows
+
+### For Users
 - **[FAQ](docs/FAQ.md)** - Frequently asked questions
 - **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
-- **[Architecture](docs/ARCHITECTURE.md)** - How AEA works internally
-- **[Examples](docs/EXAMPLES.md)** - Real-world usage examples
-- **[Security](docs/SECURITY.md)** - Security considerations
 - **[Installation Guide](INSTALL_GUIDE.md)** - Detailed installation instructions
+- **[Quick Start](QUICKSTART.md)** - Get started in 10 seconds
 
 ### Technical References
-- **[Protocol Specification](PROTOCOL.md)** - Message format and schema
+- **[Architecture](docs/ARCHITECTURE.md)** - How AEA works internally
+- **[Protocol Specification](PROTOCOL.md)** - Message format and schema (v0.1.0)
+- **[Security](docs/SECURITY.md)** - Security considerations
 - **[GitHub Integration](docs/GITHUB_INTEGRATION.md)** - GitHub Issues integration
 - **[Global Command](docs/GLOBAL_COMMAND.md)** - Global 'a' command setup
 - **[AEA Rules](docs/aea-rules.md)** - Complete protocol rules
