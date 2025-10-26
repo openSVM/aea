@@ -36,6 +36,60 @@ bash .aea/scripts/aea-check.sh
 cat .aea/agent-config.yaml
 ```
 
+## 🔄 Upgrading AEA
+
+To upgrade an existing AEA installation to the latest version:
+
+```bash
+# From repository root
+bash .aea/aea.sh upgrade
+
+# Or from within .aea directory
+cd .aea && bash aea.sh upgrade
+```
+
+### What Gets Updated
+
+- ✅ **Documentation** - All docs/*.md files
+- ✅ **Scripts** - All operational scripts
+- ✅ **Prompts** - All prompts/*.md templates
+- ✅ **Protocol** - PROTOCOL.md specification
+
+### What's Preserved
+
+- ✅ **Configuration** - Your agent-config.yaml settings
+- ✅ **Messages** - All message-*.json files
+- ✅ **History** - .processed/ directory
+- ✅ **Logs** - agent.log activity log
+
+### Upgrade Process
+
+1. **Automatic backup** created at `.aea/.backup-{timestamp}/`
+2. **Updates files** that have changed
+3. **Shows summary** of what was updated
+4. **Provides rollback** command if needed
+
+**Example output:**
+```
+╔═══════════════════════════════════════════════════════════╗
+║          AEA Protocol - Upgrade Utility                  ║
+╚═══════════════════════════════════════════════════════════╝
+
+[INFO] AEA Directory: .aea
+[INFO] Source: /path/to/aea
+[INFO] Creating backup at .aea/.backup-20251026-152143...
+[SUCCESS] Backup created
+
+[INFO] Updating documentation...
+[SUCCESS] Updated docs/AGENT_GUIDE.md
+[SUCCESS] Updated 14 documentation file(s)
+
+[SUCCESS] Upgrade complete! Updated 15 file(s)
+
+To rollback if needed:
+  cp -r .aea/.backup-20251026-152143/* .aea/
+```
+
 ## 📚 Quick Reference
 
 ### Core Concept

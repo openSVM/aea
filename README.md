@@ -79,6 +79,35 @@ To register other repositories for messaging:
 bash .aea/scripts/aea-registry.sh register agent-name /path/to/repo "Description"
 ```
 
+### Upgrading
+
+To upgrade an existing AEA installation:
+
+```bash
+# From repository root
+bash .aea/aea.sh upgrade
+
+# Or from .aea directory
+cd .aea
+bash aea.sh upgrade
+```
+
+**What gets updated:**
+- ✅ Documentation (all docs/*.md files)
+- ✅ Scripts (all operational scripts)
+- ✅ Prompts (all prompts/*.md files)
+- ✅ Protocol specification (PROTOCOL.md)
+
+**What's preserved:**
+- ✅ Your configuration (agent-config.yaml)
+- ✅ Your messages (message-*.json files)
+- ✅ Processing history (.processed/ directory)
+- ✅ Activity logs (agent.log)
+
+**Automatic backup:**
+- Backup created at `.aea/.backup-{timestamp}/`
+- Rollback command shown in upgrade output
+
 ---
 
 ## 🎯 **System Overview**

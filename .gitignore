@@ -42,3 +42,9 @@ Thumbs.db
 
 # Review and analysis documents
 .reviews/
+
+# Test data from .aea/ self-testing (this repo uses .aea/ for dogfooding)
+.aea/.backup-*/
+.aea/docs/
+.aea/scripts/
+.aea/prompts/

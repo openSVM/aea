@@ -391,6 +391,20 @@ cmd_setup_global() {
 }
 
 # ============================================================================
+# COMMAND: upgrade
+# ============================================================================
+
+cmd_upgrade() {
+    if [ -f "$SCRIPTS_DIR/aea-upgrade.sh" ]; then
+        bash "$SCRIPTS_DIR/aea-upgrade.sh" "$@"
+        return $?
+    fi
+
+    echo -e "${RED}✗ Upgrade script not found: $SCRIPTS_DIR/aea-upgrade.sh${NC}"
+    return 1
+}
+
+# ============================================================================
 # COMMAND: help
 # ============================================================================
 
@@ -434,6 +448,12 @@ ${GREEN}COMMANDS:${NC}
     Usage:
       aea.sh install /path/to/repo   # Install in target repo
       aea.sh install                 # Install in current dir
+
+  ${YELLOW}upgrade${NC}
+    Upgrade existing AEA installation to latest version
+    Updates docs, scripts, and prompts while preserving config
+    Usage:
+      aea.sh upgrade                 # Upgrade current installation
 
   ${YELLOW}create-test${NC} [scenario]
     Create test message scenarios
@@ -516,6 +536,9 @@ main() {
             ;;
         install)
             cmd_install "$@"
+            ;;
+        upgrade)
+            cmd_upgrade "$@"
             ;;
         create-test)
             cmd_create_test "$@"

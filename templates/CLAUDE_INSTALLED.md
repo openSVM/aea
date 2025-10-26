@@ -89,6 +89,25 @@ bash .aea/scripts/aea-monitor.sh start
 bash .aea/scripts/aea-monitor.sh status
 ```
 
+### Maintenance
+
+```bash
+# Upgrade to latest AEA version
+bash .aea/aea.sh upgrade
+
+# What gets updated:
+# - Documentation (docs/*.md)
+# - Scripts (scripts/*.sh)
+# - Prompts (prompts/*.md)
+# - Protocol specification (PROTOCOL.md)
+
+# What's preserved:
+# - Your configuration (agent-config.yaml)
+# - Your messages (message-*.json)
+# - Processing history (.processed/)
+# - Activity logs (agent.log)
+```
+
 ### Testing & Development
 
 ```bash
