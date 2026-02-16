@@ -1,0 +1,73 @@
+# Directory snapshot after SpecKit execution
+
+/tmp/claudev-pr-19260
+├── aea.sh
+├── agent-config.yaml
+├── CHANGELOG.md
+├── CLAUDE.md
+├── CONTRIBUTING.md
+├── docs
+│   ├── aea-rules.md
+│   ├── AGENT_GUIDE.md
+│   ├── ARCHITECTURE.md
+│   ├── AUDIT_2025-10-24.md
+│   ├── EXAMPLES.md
+│   ├── FAQ.md
+│   ├── GETTING_STARTED.md
+│   ├── GITHUB_INTEGRATION.md
+│   ├── GLOBAL_COMMAND.md
+│   ├── INSTALLATION.md
+│   ├── README.md
+│   ├── SECURITY.md
+│   ├── TESTING.md
+│   └── TROUBLESHOOTING.md
+├── INSTALL_GUIDE.md
+├── install.sh
+├── LICENSE
+├── prompts
+│   └── check-messages.md
+├── PROTOCOL.md
+├── QUICKSTART.md
+├── README.md
+├── scripts
+│   ├── aea-auto-processor.sh
+│   ├── aea-check.sh
+│   ├── aea-cleanup.sh
+│   ├── aea-common.sh
+│   ├── aea-issues.sh
+│   ├── aea-monitor.sh
+│   ├── aea-registry.sh
+│   ├── aea-send.sh
+│   ├── aea-upgrade.sh
+│   ├── aea-validate-message.sh
+│   ├── create-test-scenarios.sh
+│   ├── install-aea.sh
+│   ├── process-messages-iterative.sh
+│   ├── quick-test.sh
+│   ├── run-tests.sh
+│   ├── setup-global-alias.sh
+│   ├── test-features.sh
+│   └── uninstall-aea.sh
+├── tasks
+│   ├── TASKS_README.md
+│   └── templates.json
+├── templates
+│   └── CLAUDE_INSTALLED.md
+└── tests
+    ├── v0.1.0
+    │   ├── experimental-features-tests.json
+    │   ├── message-tests.json
+    │   └── multihop-tests.json
+    └── v2.2
+        ├── agent-health-learning.json
+        ├── message-exceeded-hops.json
+        ├── message-multihop-hop1.json
+        ├── message-multihop.json
+        ├── message-partial.json
+        ├── message-valid.json
+        ├── message-without-optional.json
+        ├── request-tracking.json
+        ├── results.json
+        └── webhook-config.json
+
+9 directories, 60 files

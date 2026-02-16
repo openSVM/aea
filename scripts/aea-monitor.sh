@@ -54,6 +54,16 @@ info() {
     echo -e "${BLUE}[AEA Monitor]${NC} $1"
 }
 
+send_notification() {
+    local title="$1"
+    local message="$2"
+    
+    # Optional: Send desktop notification if available
+    if command -v notify-send &> /dev/null; then
+        notify-send "$title" "$message" -i dialog-information -t 10000 2>/dev/null || true
+    fi
+}
+
 #===============================================================================
 # PID Management
 #===============================================================================
@@ -347,10 +357,29 @@ check_project_messages() {
             echo "[$timestamp] Monitor found $unprocessed_count unprocessed messages" >> ".aea/agent.log"
         fi
 
+        # Send desktop notification only if message count has increased
+        # Track notification state to avoid spam
+        local notif_state_file="$CONFIG_DIR/.notification_state_$(echo "$project_path" | md5sum | cut -d' ' -f1)"
+        local last_notified_count=0
+        
+        if [ -f "$notif_state_file" ]; then
+            last_notified_count=$(cat "$notif_state_file" 2>/dev/null || echo 0)
+        fi
+        
+        # Only notify if message count increased (new messages arrived)
+        if [ "$unprocessed_count" -gt "$last_notified_count" ]; then
+            send_notification "AEA Monitor" "New messages in $project_name"
+            echo "$unprocessed_count" > "$notif_state_file"
+        fi
+
         # TODO: In future, this would trigger Claude via API
         # For now, just log that messages are waiting
         warn "⏳ Messages waiting for Claude processing in $project_name"
         warn "   Run: cd $project_path && /aea"
+    else
+        # Clear notification state when all messages are processed
+        local notif_state_file="$CONFIG_DIR/.notification_state_$(echo "$project_path" | md5sum | cut -d' ' -f1)"
+        rm -f "$notif_state_file" 2>/dev/null
     fi
 }
 
